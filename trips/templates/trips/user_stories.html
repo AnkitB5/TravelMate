@@ -1,0 +1,33 @@
+<!-- trips/templates/trips/user_stories.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TravelMate - User Stories</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body style="background: #fef9e7;">
+    <div class="container mt-5">
+        <h1 class="text-center">User Stories</h1>
+        <div class="row mt-4">
+            {% for story in stories %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            {{ story.get_role_display }}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ story.story }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center">No user stories available.</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back Home</a>
+        </div>
+    </div>
+</body>
+</html>
