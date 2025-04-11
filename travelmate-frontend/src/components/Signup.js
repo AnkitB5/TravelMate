@@ -1,28 +1,37 @@
 // src/components/Signup.js
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Paper, Alert } from '@mui/material';
+import { Container, TextField, Button, Typography, Paper, Alert, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    traveler_type: 'casual', // Default value
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Post to your signup endpoint
-      await api.post('/api/signup/', { username, password });
+      await api.post('/api/signup/', formData);
       setSuccess('Signup successful! Redirecting to login...');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
       console.error('Signup error:', err);
-      setError('Signup failed. Please try again.');
+      setError(err.response?.data?.error || 'Signup failed. Please try again.');
     }
   };
 
@@ -40,8 +49,9 @@ const Signup = () => {
             variant="outlined"
             fullWidth
             margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             required
           />
           <TextField
@@ -50,10 +60,25 @@ const Signup = () => {
             fullWidth
             margin="normal"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             required
           />
+          <TextField
+            label="Traveler Type"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            select
+            name="traveler_type"
+            value={formData.traveler_type}
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value="casual">Casual Traveler</MenuItem>
+            <MenuItem value="business">Business Traveler</MenuItem>
+          </TextField>
           <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2 }}>
             Sign Up
           </Button>

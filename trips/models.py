@@ -44,3 +44,15 @@ class UserStory(models.Model):
 
     def __str__(self):
         return f"{self.get_role_display()} Story"
+    
+class Profile(models.Model):
+    TRAVELER_TYPES = (
+        ('casual', 'Casual Traveler'),
+        ('business', 'Business Traveler'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    traveler_type = models.CharField(max_length=10, choices=TRAVELER_TYPES)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.get_traveler_type_display()}"
+

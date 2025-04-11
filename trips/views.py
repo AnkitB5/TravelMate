@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import generics
-from .models import Trip, KeyFeature, UserStory
+from .models import Trip, KeyFeature, UserStory, Profile
 from .serializers import TripSerializer, KeyFeatureSerializer, UserStorySerializer
 import json
 from django.contrib.auth.models import User
@@ -43,6 +43,7 @@ def user_stories(request):
     stories = UserStory.objects.all()
     return render(request, 'trips/user_stories.html', {'stories': stories})
 
+
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
@@ -50,18 +51,25 @@ def signup(request):
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-
+            
         username = data.get('username')
         password = data.get('password')
+        traveler_type = data.get('traveler_type')  # New field from the request
 
         if not username or not password:
             return JsonResponse({'error': 'Username and password are required.'}, status=400)
+        
+        if traveler_type not in ['casual', 'business']:
+            return JsonResponse({'error': 'Traveler type must be "casual" or "business".'}, status=400)
 
         if User.objects.filter(username=username).exists():
             return JsonResponse({'error': 'User already exists.'}, status=400)
 
         # Create the user
         user = User.objects.create_user(username=username, password=password)
+        # Create a corresponding Profile for the new user
+        Profile.objects.create(user=user, traveler_type=traveler_type)
+
         return JsonResponse({'message': 'User created successfully.'}, status=201)
     else:
         return JsonResponse({'error': 'Only POST method is allowed.'}, status=405)
