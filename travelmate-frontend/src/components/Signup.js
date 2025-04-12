@@ -9,7 +9,7 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    traveler_type: 'casual', // Default value
+    traveler_type: 'casual', // Default is casual traveler
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

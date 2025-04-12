@@ -26,10 +26,10 @@ INSTALLED_APPS = [
     'trips',
 ]
 
-CORS_ALLOWED_ORIGINS = ["http://localhost:3001",]
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000",]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3001",
+    "http://localhost:3000",
 ]
 
 MIDDLEWARE = [

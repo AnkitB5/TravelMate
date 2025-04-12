@@ -5,7 +5,7 @@ from .models import Trip, KeyFeature, UserStory
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = ['id', 'destination', 'travel_start', 'travel_end', 'activities', 'packing_list', 'created_at']
+        fields = ['id', 'destination', 'travel_start', 'travel_end', 'activities', 'packing_list', 'meeting_schedule', 'created_at']
 
 class KeyFeatureSerializer(serializers.ModelSerializer):
     class Meta:

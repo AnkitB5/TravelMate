@@ -8,15 +8,22 @@ import json
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
 
 # API Views (for JSON endpoints)
 class TripListCreateAPIView(generics.ListCreateAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class TripDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class KeyFeatureListAPIView(generics.ListAPIView):
     queryset = KeyFeature.objects.all()
@@ -42,6 +49,11 @@ def user_stories(request):
     # Retrieve all user stories and render them in the user_stories template.
     stories = UserStory.objects.all()
     return render(request, 'trips/user_stories.html', {'stories': stories})
+
+def trip_dashboard(request):
+    from .models import Trip
+    trips = Trip.objects.all()
+    return render(request, 'trips/trip_dashboard.html', {'trips': trips})
 
 
 @csrf_exempt

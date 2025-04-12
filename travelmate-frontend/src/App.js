@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/NavBar';
+import HomePage from './components/HomePage';
 import TripDashboard from './components/TripDashboard';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -11,10 +12,10 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<TripDashboard />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<TripDashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* Additional routes (e.g., for TripDetails) go here */}
       </Routes>
     </Router>
   );

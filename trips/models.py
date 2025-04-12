@@ -11,6 +11,7 @@ class Trip(models.Model):
     activities = models.TextField(blank=True)
     packing_list = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    meeting_schedule = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.destination} ({self.travel_start} - {self.travel_end})"
@@ -45,6 +46,7 @@ class UserStory(models.Model):
     def __str__(self):
         return f"{self.get_role_display()} Story"
     
+# trips/models.py (append this below Trip)
 class Profile(models.Model):
     TRAVELER_TYPES = (
         ('casual', 'Casual Traveler'),
@@ -55,4 +57,5 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.get_traveler_type_display()}"
+
 

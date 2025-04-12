@@ -18,12 +18,14 @@ const Login = () => {
       localStorage.setItem('access_token', res.data.access);
       localStorage.setItem('refresh_token', res.data.refresh);
       // Navigate to the dashboard (or home page)
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err);
       setError('Invalid credentials. Please try again.');
     }
   };
+
+  
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>

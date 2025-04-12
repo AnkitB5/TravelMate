@@ -1,15 +1,18 @@
 // src/services/api.js
 import axios from 'axios';
 
-// Set base URL to match your Django backend
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8001', // Django backend URL
+  baseURL: 'http://127.0.0.1:8000', // Your Django backend URL
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Example interceptor (optional)
+// Attach the token to each request if it exists
 api.interceptors.request.use(
   config => {
-    // Optionally attach auth tokens from localStorage, etc.
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   error => Promise.reject(error)
