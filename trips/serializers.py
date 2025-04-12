@@ -6,6 +6,7 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = ['id', 'destination', 'travel_start', 'travel_end', 'activities', 'packing_list', 'meeting_schedule', 'created_at']
+        read_only_fields = ['user', 'created_at']
 
 class KeyFeatureSerializer(serializers.ModelSerializer):
     class Meta:

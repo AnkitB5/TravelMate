@@ -9,10 +9,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
-    localStorage.removeItem('traveler_type');
     localStorage.removeItem('username');
+    localStorage.removeItem('traveler_type');
     navigate('/');
   };
+  
 
   return (
     <AppBar position="static" sx={{ mb: 2, background: 'rgba(0,0,0,0.75)' }}>

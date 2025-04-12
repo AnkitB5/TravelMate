@@ -52,7 +52,7 @@ def user_stories(request):
 
 def trip_dashboard(request):
     from .models import Trip
-    trips = Trip.objects.all()
+    trips = Trip.objects.filler(user = request.user)
     return render(request, 'trips/trip_dashboard.html', {'trips': trips})
 
 

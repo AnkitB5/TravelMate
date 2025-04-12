@@ -14,13 +14,12 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await api.post('/token/', { username, password });
-      // Save the tokens (for example in localStorage)
+      // Save token (and username/traveler_type if needed) after a successful login
       localStorage.setItem('access_token', res.data.access);
-      localStorage.setItem('refresh_token', res.data.refresh);
-      // Navigate to the dashboard (or home page)
-      navigate('/dashboard');
+      localStorage.setItem('username', res.data.username); // if available
+      localStorage.setItem('traveler_type', "casual"); // or "business" depending on your implementation
+      navigate('/dashboard'); // Redirect to Dashboard after login
     } catch (err) {
-      console.error('Login error:', err);
       setError('Invalid credentials. Please try again.');
     }
   };

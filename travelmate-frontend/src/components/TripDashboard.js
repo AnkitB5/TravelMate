@@ -1,17 +1,6 @@
 // src/components/TripDashboard.js
 import React, { useEffect, useState } from 'react';
-import {
-  Container,
-  Typography,
-  Grid,
-  Paper,
-  TextField,
-  Button,
-  Snackbar,
-  Box,
-  Alert,
-  Fade
-} from '@mui/material';
+import { Container, Typography, Grid, Paper, TextField, Button, Snackbar, Box, Alert, Fade } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TripCard from './TripCard';
 import api from '../services/api';
@@ -28,7 +17,6 @@ const TripDashboard = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Ensure user is logged in; otherwise, redirect to login
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     if (!token) {
@@ -50,6 +38,7 @@ const TripDashboard = () => {
 
   const handleCreateTrip = (e) => {
     e.preventDefault();
+    // Send only the fields that belong to the trip.
     api.post('/api/trips/', newTrip)
       .then(res => {
         setTrips([...trips, res.data]);
@@ -58,7 +47,9 @@ const TripDashboard = () => {
       })
       .catch(err => console.error('Error creating trip:', err));
   };
+  
 
+  // Get traveler type (if needed)
   const travelerType = localStorage.getItem('traveler_type'); // 'casual' or 'business'
 
   return (
