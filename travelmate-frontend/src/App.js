@@ -7,6 +7,7 @@ import TripDashboard from './components/TripDashboard';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import WeatherForecast from './components/WeatherForecast';
+import Footer from './components/footer';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/weather/:tripId" element={<WeatherForecast />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
