@@ -6,12 +6,15 @@ from django.contrib.auth.models import User
 class Trip(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trips')
     destination = models.CharField(max_length=255)
+    latitude = models.FloatField(null=True, blank=True)  # Added for weather forecasting
+    longitude = models.FloatField(null=True, blank=True)  # Added for weather forecasting
     travel_start = models.DateField()
     travel_end = models.DateField()
     activities = models.TextField(blank=True)
     packing_list = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     meeting_schedule = models.TextField(blank=True, null=True)
+    recommendations = models.JSONField(default=dict, blank=True)  # Store AI-generated recommendations
 
     def __str__(self):
         return f"{self.destination} ({self.travel_start} - {self.travel_end})"

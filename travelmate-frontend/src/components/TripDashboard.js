@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Paper, TextField, Button, Snackbar, Box, Alert, Fade } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TripCard from './TripCard';
+import CitySearch from './CitySearch';
 import api from '../services/api';
 
 const TripDashboard = () => {
@@ -14,7 +15,9 @@ const TripDashboard = () => {
     activities: '',
     meeting_schedule: ''
   });
+  const [selectedCity, setSelectedCity] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,16 +39,60 @@ const TripDashboard = () => {
     setNewTrip({ ...newTrip, [e.target.name]: e.target.value });
   };
 
+  const handleCitySelect = (city) => {
+    setSelectedCity(city);
+    if (city) {
+      setNewTrip({
+        ...newTrip,
+        destination: city.display_name,
+      });
+    }
+  };
+
   const handleCreateTrip = (e) => {
     e.preventDefault();
     // Send only the fields that belong to the trip.
     api.post('/api/trips/', newTrip)
+    
+    // Validate that a city is selected
+    if (!selectedCity) {
+      setErrorMessage('Please select a valid city from the dropdown');
+      return;
+    }
+    
+    // Create trip data with latitude and longitude
+    const tripData = {
+      ...newTrip,
+      latitude: selectedCity.latitude,
+      longitude: selectedCity.longitude
+    };
+    
+    api.post('/api/trips/', tripData)
       .then(res => {
         setTrips([...trips, res.data]);
         setNewTrip({ destination: '', travel_start: '', travel_end: '', activities: '', meeting_schedule: '' });
+        setSelectedCity(null);
         setAlertOpen(true);
+        setErrorMessage('');
       })
-      .catch(err => console.error('Error creating trip:', err));
+      .catch(err => {
+        console.error('Error creating trip:', err);
+        setErrorMessage('Failed to create trip. Please try again.');
+      });
+  };
+
+  const handleTripUpdated = (updatedTrip) => {
+    // Update the trips array with the updated trip
+    setTrips(trips.map(trip => 
+      trip.id === updatedTrip.id ? updatedTrip : trip
+    ));
+    setAlertOpen(true);
+  };
+  
+  const handleTripDeleted = (tripId) => {
+    // Remove the deleted trip from the trips array
+    setTrips(trips.filter(trip => trip.id !== tripId));
+    setAlertOpen(true);
   };
   
 
@@ -71,7 +118,11 @@ const TripDashboard = () => {
         <Grid container spacing={3}>
           {trips.map((trip) => (
             <Grid item xs={12} sm={6} md={4} key={trip.id}>
-              <TripCard trip={trip} onEdit={() => {}} onDelete={() => {}} />
+              <TripCard 
+                trip={trip} 
+                onTripUpdated={handleTripUpdated} 
+                onDelete={handleTripDeleted} 
+              />
             </Grid>
           ))}
         </Grid>
@@ -81,16 +132,21 @@ const TripDashboard = () => {
             <Typography variant="h5" gutterBottom>
               Create a New Trip
             </Typography>
+            
+            {errorMessage && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {errorMessage}
+              </Alert>
+            )}
+            
             <form onSubmit={handleCreateTrip} noValidate>
-              <TextField
-                label="Destination"
-                name="destination"
-                value={newTrip.destination}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                required
+              <CitySearch 
+                value={selectedCity}
+                onChange={handleCitySelect}
+                error={!!errorMessage && !selectedCity}
+                helperText="Select a city from the dropdown for accurate weather data"
               />
+              
               <TextField
                 label="Start Date"
                 name="travel_start"
