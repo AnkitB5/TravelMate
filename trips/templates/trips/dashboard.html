@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Your Trips</h1>
+  {% if trips %}
+    <ul>
+      {% for trip in trips %}
+        <li>
+          <a href="{% url 'trips:details' trip.pk %}">
+            {{ trip.destination }} ({{ trip.travel_start }} → {{ trip.travel_end }})
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven’t created any trips yet. <a href="{% url 'trips:create_trip' %}">Plan one now.</a></p>
+  {% endif %}
+{% endblock %}

@@ -96,6 +96,13 @@ def trip_dashboard(request):
     trips = Trip.objects.all()
     return render(request, 'trips/trip_dashboard.html', {'trips': trips})
 
+def dashboard(request):
+    # grab all of this user’s trips
+    trips = Trip.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'trips/dashboard.html', {
+        'trips': trips
+    })
+
 
 @csrf_exempt
 def signup(request):
