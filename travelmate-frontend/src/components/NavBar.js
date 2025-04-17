@@ -1,5 +1,5 @@
 // src/components/Navbar.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -58,6 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('access_token');
+  const [searchText, setSearchText] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -65,7 +66,11 @@ const Navbar = () => {
     localStorage.removeItem('traveler_type');
     navigate('/');
   };
-  
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/dashboard?search=${encodeURIComponent(searchText)}`);
+  };
 
   return (
     <AppBar
@@ -104,15 +109,19 @@ const Navbar = () => {
         {/* Right side: Search Bar and Navigation Buttons */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {/* Search Bar */}
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+          <form onSubmit={handleSearchSubmit}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+            </Search>
+          </form>
 
           {/* Navigation Buttons */}
           {token ? (
