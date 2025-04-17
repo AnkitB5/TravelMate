@@ -1,6 +1,7 @@
 # trips/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # Existing Trip model...
 class Trip(models.Model):
@@ -16,6 +17,13 @@ class Trip(models.Model):
     meeting_schedule = models.TextField(blank=True, null=True)
     recommendations = models.JSONField(default=dict, blank=True)  # Store AI-generated recommendations
 
+    def clean(self):
+        super().clean()
+        if self.travel_end < self.travel_start:
+            raise ValidationError({
+                'travel_end': 'End date cannot be before start date.'
+            })
+        
     def __str__(self):
         return f"{self.destination} ({self.travel_start} - {self.travel_end})"
 
@@ -60,5 +68,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.get_traveler_type_display()}"
-
-

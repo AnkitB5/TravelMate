@@ -15,6 +15,10 @@ from rest_framework import status
 from .services.weather_service import WeatherService
 from .services.geocoding_service import GeocodingService
 from datetime import datetime
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from .forms import TripForm
+from .models import Trip
 
 # API Views (for JSON endpoints)
 class TripListCreateAPIView(generics.ListCreateAPIView):
@@ -236,6 +240,30 @@ def trip_clothing_recommendations(request, trip_id):
             {"error": "Trip not found or unauthorized."}, 
             status=status.HTTP_404_NOT_FOUND
         )
+
+def create_trip(request):
+    if request.method == 'POST':
+        form = TripForm(request.POST)
+        if form.is_valid():
+            trip = form.save(commit=False)
+            trip.user = request.user
+            trip.save()
+            return redirect('trips:dashboard')
+    else:
+        form = TripForm()
+    return render(request, 'trips/create_trip.html', {'form': form})
+
+
+def edit_trip(request, pk):
+    trip = Trip.objects.get(pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = TripForm(request.POST, instance=trip)
+        if form.is_valid():
+            form.save()
+            return redirect('trips:details', pk=trip.pk)
+    else:
+        form = TripForm(instance=trip)
+    return render(request, 'trips/edit_trip.html', {'form': form, 'trip': trip})
 
 def trip_weather_view(request, trip_id):
     """

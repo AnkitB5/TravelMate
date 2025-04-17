@@ -19,4 +19,7 @@ urlpatterns = [
     path('api/trips/<int:trip_id>/clothing-recommendations/', views.trip_clothing_recommendations, name='trip_clothing_recommendations'),
     # City search API endpoint:
     path('api/cities/search/', views.search_cities, name='search_cities'),
+    path('', views.dashboard, name='dashboard'),     # existing dashboard view
+    path('new/', views.create_trip, name='create_trip'),
+    path('<int:pk>/edit/', views.edit_trip, name='edit_trip'),
 ]

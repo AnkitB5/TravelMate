@@ -1,0 +1,41 @@
+{# trips/templates/trips/create_trip.html #}
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container mt-4">
+    <h1>Plan a New Trip</h1>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="mb-3">
+        {{ form.destination.label_tag }}
+        {{ form.destination }}
+        {{ form.destination.errors }}
+      </div>
+      <div class="mb-3">
+        {{ form.travel_start.label_tag }}
+        {{ form.travel_start }}
+        {{ form.travel_start.errors }}
+      </div>
+      <div class="mb-3">
+        {{ form.travel_end.label_tag }}
+        {{ form.travel_end }}
+        {{ form.travel_end.errors }}
+      </div>
+      <div class="mb-3">
+        {{ form.activities.label_tag }}
+        {{ form.activities }}
+      </div>
+      <div class="mb-3">
+        {{ form.packing_list.label_tag }}
+        {{ form.packing_list }}
+      </div>
+      {% if request.user.profile.traveler_type == 'business' %}
+        <div class="mb-3">
+          {{ form.meeting_schedule.label_tag }}
+          {{ form.meeting_schedule }}
+        </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary">Save Trip</button>
+    </form>
+  </div>
+{% endblock %}
