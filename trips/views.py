@@ -18,9 +18,11 @@ from datetime import datetime
 
 # API Views (for JSON endpoints)
 class TripListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Trip.objects.all()
     serializer_class = TripSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Trip.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         # Check if coordinates are provided from frontend

@@ -18,6 +18,7 @@ const TripDashboard = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,22 +52,35 @@ const TripDashboard = () => {
 
   const handleCreateTrip = (e) => {
     e.preventDefault();
-    // Send only the fields that belong to the trip.
-    api.post('/api/trips/', newTrip)
-    
+
+    // Prevent duplicate submit
+    if(isSubmitting) return;
+
     // Validate that a city is selected
     if (!selectedCity) {
       setErrorMessage('Please select a valid city from the dropdown');
       return;
     }
-    
+
+    // Validate dates if provided
+    if (newTrip.travel_start && newTrip.travel_end) {
+      const startDate = new Date(newTrip.travel_start);
+      const endDate = new Date(newTrip.travel_end);
+      if (startDate > endDate) {
+        setErrorMessage('Start date cannot be after end date');
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+
     // Create trip data with latitude and longitude
     const tripData = {
       ...newTrip,
       latitude: selectedCity.latitude,
       longitude: selectedCity.longitude
     };
-    
+
     api.post('/api/trips/', tripData)
       .then(res => {
         setTrips([...trips, res.data]);
@@ -78,6 +92,9 @@ const TripDashboard = () => {
       .catch(err => {
         console.error('Error creating trip:', err);
         setErrorMessage('Failed to create trip. Please try again.');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
   };
 
