@@ -1,7 +1,7 @@
 // src/components/TripDashboard.js
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Grid, Paper, TextField, Button, Snackbar, Box, Alert, Fade } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TripCard from './TripCard';
 import CitySearch from './CitySearch';
 import api from '../services/api';
@@ -20,10 +20,6 @@ const TripDashboard = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Read search query from URL, defaulting to an empty string
-  const searchQuery = new URLSearchParams(location.search).get('search') || '';
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -56,13 +52,17 @@ const TripDashboard = () => {
 
   const handleCreateTrip = (e) => {
     e.preventDefault();
-    if (isSubmitting) return;
 
+    // Prevent duplicate submit
+    if(isSubmitting) return;
+
+    // Validate that a city is selected
     if (!selectedCity) {
       setErrorMessage('Please select a valid city from the dropdown');
       return;
     }
 
+    // Validate dates if provided
     if (newTrip.travel_start && newTrip.travel_end) {
       const startDate = new Date(newTrip.travel_start);
       const endDate = new Date(newTrip.travel_end);
@@ -74,6 +74,7 @@ const TripDashboard = () => {
 
     setIsSubmitting(true);
 
+    // Create trip data with latitude and longitude
     const tripData = {
       ...newTrip,
       latitude: selectedCity.latitude,
@@ -82,14 +83,11 @@ const TripDashboard = () => {
 
     api.post('/api/trips/', tripData)
       .then(res => {
-        // Option 1: update state directly and clear the search query so the new trip shows
         setTrips([...trips, res.data]);
         setNewTrip({ destination: '', travel_start: '', travel_end: '', activities: '', meeting_schedule: '' });
         setSelectedCity(null);
         setAlertOpen(true);
         setErrorMessage('');
-        // Clear the URL search query to ensure the created trip is visible
-        navigate('/dashboard');
       })
       .catch(err => {
         console.error('Error creating trip:', err);
@@ -101,20 +99,21 @@ const TripDashboard = () => {
   };
 
   const handleTripUpdated = (updatedTrip) => {
-    setTrips(trips.map(trip => trip.id === updatedTrip.id ? updatedTrip : trip));
+    // Update the trips array with the updated trip
+    setTrips(trips.map(trip => 
+      trip.id === updatedTrip.id ? updatedTrip : trip
+    ));
     setAlertOpen(true);
   };
-
+  
   const handleTripDeleted = (tripId) => {
+    // Remove the deleted trip from the trips array
     setTrips(trips.filter(trip => trip.id !== tripId));
     setAlertOpen(true);
   };
+  
 
-  // Filter trips using the search query from the URL (case insensitive)
-  const filteredTrips = trips.filter(trip => 
-    trip.destination.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
+  // Get traveler type (if needed)
   const travelerType = localStorage.getItem('traveler_type'); // 'casual' or 'business'
 
   return (
@@ -127,14 +126,14 @@ const TripDashboard = () => {
           </Button>
         </Box>
 
-        {filteredTrips.length === 0 && (
+        {trips.length === 0 && (
           <Alert severity="info" sx={{ mb: 2 }}>
             No trips found. Create your first trip!
           </Alert>
         )}
 
         <Grid container spacing={3}>
-          {filteredTrips.map((trip) => (
+          {trips.map((trip) => (
             <Grid item xs={12} sm={6} md={4} key={trip.id}>
               <TripCard 
                 trip={trip} 
