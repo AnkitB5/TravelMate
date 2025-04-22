@@ -13,18 +13,22 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('Attempting login with:', { username });
       const res = await api.post('/token/', { username, password });
-      // Save token (and username/traveler_type if needed) after a successful login
+      console.log('Login response:', res.data);
+      
+      // Save token and user data
       localStorage.setItem('access_token', res.data.access);
-      localStorage.setItem('username', res.data.username); // if available
-      localStorage.setItem('traveler_type', "casual"); // or "business" depending on your implementation
-      navigate('/dashboard'); // Redirect to Dashboard after login
+      localStorage.setItem('refresh_token', res.data.refresh);
+      localStorage.setItem('username', username);
+      
+      // Redirect to dashboard
+      navigate('/dashboard');
     } catch (err) {
-      setError('Invalid credentials. Please try again.');
+      console.error('Login error:', err.response?.data || err.message);
+      setError(err.response?.data?.detail || 'Invalid credentials. Please try again.');
     }
   };
-
-  
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
@@ -58,7 +62,12 @@ const Login = () => {
           </Button>
         </form>
         <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-          Don’t have an account? <Button onClick={() => navigate('/signup')}>Sign Up</Button>
+          <Button onClick={() => navigate('/password-reset')} color="secondary">
+            Forgot Password?
+          </Button>
+        </Typography>
+        <Typography variant="body2" align="center" sx={{ mt: 1 }}>
+          Don't have an account? <Button onClick={() => navigate('/signup')}>Sign Up</Button>
         </Typography>
       </Paper>
     </Container>

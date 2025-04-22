@@ -1,9 +1,19 @@
 # travelmate-backend/travelmate/settings.py
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project
+# Load environment variables from .env file
+load_dotenv()
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Debug: Print the contents of .env file
+print("\n=== Environment Variables ===")
+print(f"EMAIL_HOST_USER: {os.getenv('EMAIL_HOST_USER')}")
+print(f"EMAIL_HOST_PASSWORD: {'*' * len(os.getenv('EMAIL_HOST_PASSWORD', ''))}")
+print("===========================\n")
 
 SECRET_KEY = 'your-secret-key'  # Change for production!
 
@@ -101,3 +111,18 @@ USE_TZ = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 STATIC_URL = '/static/'
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+# Debug email settings
+print("\n=== Email Configuration ===")
+print(f"EMAIL_BACKEND: {EMAIL_BACKEND}")
+print(f"DEFAULT_FROM_EMAIL: {DEFAULT_FROM_EMAIL}")
+print(f"MAILGUN_API_KEY exists: {os.getenv('MAILGUN_API_KEY') is not None}")
+print(f"MAILGUN_DOMAIN exists: {os.getenv('MAILGUN_DOMAIN') is not None}")
+print("===========================\n")
+
+# Password Reset Settings
+PASSWORD_RESET_TIMEOUT = int(os.getenv('PASSWORD_RESET_TIMEOUT', 86400))  # 24 hours in seconds

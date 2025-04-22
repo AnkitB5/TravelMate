@@ -15,6 +15,16 @@ from rest_framework import status
 from .services.weather_service import WeatherService
 from .services.geocoding_service import GeocodingService
 from datetime import datetime
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
+from django.conf import settings
+from django.core.mail import EmailMessage
+import os
+import requests
 
 # API Views (for JSON endpoints)
 class TripListCreateAPIView(generics.ListCreateAPIView):
@@ -105,19 +115,32 @@ def signup(request):
             
         username = data.get('username')
         password = data.get('password')
-        traveler_type = data.get('traveler_type')  # New field from the request
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        email = data.get('email')
+        traveler_type = data.get('traveler_type')
 
-        if not username or not password:
-            return JsonResponse({'error': 'Username and password are required.'}, status=400)
+        if not all([username, password, first_name, last_name, email]):
+            return JsonResponse({'error': 'All fields are required.'}, status=400)
         
         if traveler_type not in ['casual', 'business']:
             return JsonResponse({'error': 'Traveler type must be "casual" or "business".'}, status=400)
 
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'User already exists.'}, status=400)
+            return JsonResponse({'error': 'Username already exists.'}, status=400)
+            
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'error': 'Email already exists.'}, status=400)
 
-        # Create the user
-        user = User.objects.create_user(username=username, password=password)
+        # Create the user with additional fields
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        
         # Create a corresponding Profile for the new user
         Profile.objects.create(user=user, traveler_type=traveler_type)
 
@@ -356,3 +379,139 @@ def search_cities(request):
         "count": len(cities),
         "cities": cities
     })
+
+@csrf_exempt
+def password_reset_request(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            
+            print("\n=== Password Reset Request ===")
+            print(f"Requested email: {email}")
+            
+            if not email:
+                return JsonResponse({'error': 'Email is required.'}, status=400)
+                
+            try:
+                user = User.objects.get(email=email)
+                print(f"\n=== User Found in Database ===")
+                print(f"Username: {user.username}")
+                print(f"Email: {user.email}")
+            except User.DoesNotExist:
+                print(f"\n=== User Not Found in Database ===")
+                print(f"Email not found: {email}")
+                return JsonResponse({
+                    'message': 'If an account exists with this email, you will receive password reset instructions.'
+                }, status=200)
+                
+            # Generate password reset token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Create reset URL
+            reset_url = request.build_absolute_uri(
+                reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+            )
+            
+            # Send email using Mailgun API
+            try:
+                print("\n=== Sending Email via Mailgun API ===")
+                import requests
+                
+                # Mailgun API settings
+                MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
+                MAILGUN_DOMAIN = os.getenv('MAILGUN_DOMAIN')
+                
+                print(f"Using domain: {MAILGUN_DOMAIN}")
+                print(f"API Key length: {len(MAILGUN_API_KEY) if MAILGUN_API_KEY else 'None'}")
+                print(f"API Key starts with: {MAILGUN_API_KEY[:4] if MAILGUN_API_KEY else 'None'}")
+                
+                if not MAILGUN_API_KEY or not MAILGUN_DOMAIN:
+                    print("Error: Missing Mailgun configuration")
+                    return JsonResponse({
+                        'message': 'If an account exists with this email, you will receive password reset instructions.'
+                    }, status=200)
+                
+                # Prepare email content
+                subject = 'Password Reset Request'
+                message = render_to_string('password_reset_email.html', {
+                    'user': user,
+                    'reset_url': reset_url,
+                })
+                
+                # Send email via Mailgun API
+                response = requests.post(
+                    f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
+                    auth=("api", MAILGUN_API_KEY),
+                    data={
+                        "from": f"TravelMate <postmaster@{MAILGUN_DOMAIN}>",
+                        "to": [email],
+                        "subject": subject,
+                        "html": message
+                    },
+                    headers={
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                )
+                
+                print(f"Mailgun API Response Status: {response.status_code}")
+                print(f"Mailgun API Response: {response.text}")
+                print(f"Request URL: {response.request.url}")
+                print(f"Request Headers: {response.request.headers}")
+                
+                if response.status_code == 200:
+                    print("Email sent successfully!")
+                    return JsonResponse({
+                        'message': 'If an account exists with this email, you will receive password reset instructions.'
+                    }, status=200)
+                else:
+                    print("Failed to send email via Mailgun API")
+                    return JsonResponse({
+                        'message': 'If an account exists with this email, you will receive password reset instructions.'
+                    }, status=200)
+                    
+            except Exception as e:
+                print(f"\n=== Mailgun API Error ===")
+                print(f"Error type: {type(e).__name__}")
+                print(f"Error message: {str(e)}")
+                print("Full error details:")
+                import traceback
+                print(traceback.format_exc())
+                print("=============================\n")
+                return JsonResponse({
+                    'message': 'If an account exists with this email, you will receive password reset instructions.'
+                }, status=200)
+            
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is allowed.'}, status=405)
+
+@csrf_exempt
+def password_reset_confirm(request, uidb64, token):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_password = data.get('password')
+            
+            if not new_password:
+                return JsonResponse({'error': 'New password is required.'}, status=400)
+                
+            try:
+                uid = force_str(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(pk=uid)
+            except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                return JsonResponse({'error': 'Invalid reset link.'}, status=400)
+                
+            if default_token_generator.check_token(user, token):
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({'message': 'Password has been reset successfully.'}, status=200)
+            else:
+                return JsonResponse({'error': 'Invalid reset link.'}, status=400)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST method is allowed.'}, status=405)
