@@ -51,6 +51,19 @@ const Login = ({ setIsAuthenticated }) => {
         localStorage.setItem('username', username);
         localStorage.setItem('isAuthenticated', 'true');
         
+        // Fetch user profile to get traveler_type
+        try {
+          const profileRes = await api.get('/api/profile/');
+          console.log('Profile response:', profileRes.data);
+          
+          if (profileRes.data && profileRes.data.traveler_type) {
+            localStorage.setItem('traveler_type', profileRes.data.traveler_type);
+            console.log('Saved traveler_type to localStorage:', profileRes.data.traveler_type);
+          }
+        } catch (profileErr) {
+          console.error('Error fetching user profile:', profileErr);
+        }
+        
         if (setIsAuthenticated) {
           console.log('Setting authenticated state to true');
           setIsAuthenticated(true);

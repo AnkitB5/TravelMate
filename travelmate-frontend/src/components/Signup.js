@@ -85,6 +85,8 @@ const Signup = ({ setIsAuthenticated }) => {
           localStorage.setItem('refresh_token', loginResponse.data.refresh || '');
           localStorage.setItem('username', formData.username);
           localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('traveler_type', formData.traveler_type);
+          console.log('Saved traveler_type to localStorage:', formData.traveler_type);
           
           if (setIsAuthenticated) {
             setIsAuthenticated(true);

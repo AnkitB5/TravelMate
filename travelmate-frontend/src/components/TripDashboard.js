@@ -21,7 +21,11 @@ import {
   FormHelperText,
   Divider,
   Paper,
-  IconButton
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +36,9 @@ import FlightLandIcon from '@mui/icons-material/FlightLand';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CloseIcon from '@mui/icons-material/Close';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import EventIcon from '@mui/icons-material/Event';
+import DeleteIcon from '@mui/icons-material/Delete';
+import BusinessIcon from '@mui/icons-material/Business';
 import api from '../services/api';
 import CitySearch from './CitySearch';
 import TripCard from './TripCard';
@@ -85,6 +92,11 @@ const SectionTitle = styled(Typography)(({ theme }) => ({
 export default function TripDashboard({ searchQuery: propSearchQuery }) {
   const navigate = useNavigate();
 
+  // User profile state
+  const [userProfile, setUserProfile] = useState(null);
+  const [isBusinessTraveler, setIsBusinessTraveler] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
+
   // trips + UI state
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
@@ -97,6 +109,8 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
   const [selectedCity, setSelectedCity] = useState(null);
   const [formData, setFormData] = useState({ travel_start: '', travel_end: '' });
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [meetings, setMeetings] = useState([]);
+  const [meetingForm, setMeetingForm] = useState({ title: '', date: '', time: '', location: '', notes: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const availableActivities = [
@@ -117,6 +131,23 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
       setSearchQuery(propSearchQuery);
     }
   }, [propSearchQuery]);
+
+  // Fetch user profile
+  useEffect(() => {
+    async function fetchUserProfile() {
+      try {
+        const res = await api.get('/api/profile/');
+        setUserProfile(res.data);
+        setIsBusinessTraveler(res.data.traveler_type === 'business');
+      } catch (err) {
+        console.error('Failed to load user profile:', err);
+      } finally {
+        setProfileLoading(false);
+      }
+    }
+
+    fetchUserProfile();
+  }, []);
 
   // Fetch trips & dedupe
   useEffect(() => { fetchTrips(); }, []);
@@ -163,18 +194,37 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
       setSelectedTrip(trip);
       setSelectedCity({ display_name: trip.destination });
       setFormData({ travel_start: trip.travel_start, travel_end: trip.travel_end });
+      
       const acts = Array.isArray(trip.activities)
         ? trip.activities.map(id => availableActivities.find(a => a.id === id)).filter(Boolean)
         : [];
       setSelectedActivities(acts);
+      
+      // Parse meeting schedule if it exists
+      if (trip.meeting_schedule) {
+        try {
+          const meetingData = typeof trip.meeting_schedule === 'string' 
+            ? JSON.parse(trip.meeting_schedule) 
+            : trip.meeting_schedule;
+          setMeetings(Array.isArray(meetingData) ? meetingData : []);
+        } catch (err) {
+          console.error('Error parsing meeting schedule:', err);
+          setMeetings([]);
+        }
+      } else {
+        setMeetings([]);
+      }
     } else {
       setSelectedTrip(null);
       setSelectedCity(null);
       setFormData({ travel_start: '', travel_end: '' });
       setSelectedActivities([]);
+      setMeetings([]);
     }
+    setMeetingForm({ title: '', date: '', time: '', location: '', notes: '' });
     setOpenDialog(true);
   }
+  
   function handleCloseDialog() {
     setOpenDialog(false);
     setError(null);
@@ -187,8 +237,40 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
       setSelectedActivities(prev => [...prev, act]);
     }
   }
+  
   function handleActivityRemove(id) {
     setSelectedActivities(prev => prev.filter(a => a.id !== id));
+  }
+
+  function handleMeetingFormChange(e) {
+    const { name, value } = e.target;
+    setMeetingForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  function handleAddMeeting() {
+    // Validate required fields
+    if (!meetingForm.title || !meetingForm.date || !meetingForm.time) {
+      setError('Meeting title, date and time are required');
+      return;
+    }
+
+    // Add meeting to list
+    const newMeeting = {
+      ...meetingForm,
+      id: Date.now() // Generate a unique ID
+    };
+    
+    setMeetings(prev => [...prev, newMeeting]);
+    
+    // Clear form
+    setMeetingForm({ title: '', date: '', time: '', location: '', notes: '' });
+  }
+
+  function handleRemoveMeeting(id) {
+    setMeetings(prev => prev.filter(meeting => meeting.id !== id));
   }
 
   // Submit create or edit
@@ -215,8 +297,11 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
         destination: selectedCity.display_name,
         travel_start: formData.travel_start,
         travel_end: formData.travel_end,
-        activities: JSON.stringify(selectedActivities.map(a => a.id))
+        activities: JSON.stringify(selectedActivities.map(a => a.id)),
+        // Only include meeting_schedule if user is a business traveler
+        ...(isBusinessTraveler && { meeting_schedule: JSON.stringify(meetings) })
       };
+
       if (selectedTrip) {
         await api.put(`/api/trips/${selectedTrip.id}/`, payload);
       } else {
@@ -224,15 +309,16 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
       }
       handleCloseDialog();
       fetchTrips();
-    } catch {
+    } catch (err) {
+      console.error('Error saving trip:', err);
       setError('Failed to save trip.');
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
   }
 
   // loading state
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
         <CircularProgress />
@@ -244,7 +330,7 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       {/* Top toolbar with Back to Home + New Trip */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">My Trips</Typography>
+          <Typography variant="h4">My Trips</Typography>
         <Box>
           <Button
             variant="outlined"
@@ -262,7 +348,7 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
             New Trip
           </Button>
         </Box>
-      </Box>
+        </Box>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
@@ -272,7 +358,7 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
         <Grid container spacing={3}>
           {filteredTrips.map(t => (
             <Grid item xs={12} sm={6} md={4} key={t.id}>
-              <TripCard
+              <TripCard 
                 trip={t}
                 onTripUpdated={fetchTrips}
                 onDelete={fetchTrips}
@@ -302,7 +388,7 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
                 <LocationOnIcon />
                 Destination
               </SectionTitle>
-              <CitySearch
+              <CitySearch 
                 value={selectedCity}
                 onChange={setSelectedCity}
                 helperText="Search for a city, region, or country"
@@ -318,10 +404,10 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
               </SectionTitle>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField
+              <TextField
                     fullWidth
-                    label="Start Date"
-                    type="date"
+                label="Start Date"
+                type="date"
                     value={formData.travel_start}
                     onChange={e => setFormData(fd => ({ ...fd, travel_start: e.target.value }))}
                     InputLabelProps={{ shrink: true }}
@@ -334,12 +420,12 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    fullWidth
+                fullWidth
                     label="End Date"
                     type="date"
                     value={formData.travel_end}
                     onChange={e => setFormData(fd => ({ ...fd, travel_end: e.target.value }))}
-                    InputLabelProps={{ shrink: true }}
+                InputLabelProps={{ shrink: true }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: '10px',
@@ -410,6 +496,137 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
               )}
             </FormSection>
             
+            {/* Meeting Schedule Section - Only for Business Travelers */}
+            {isBusinessTraveler && (
+              <>
+                <Divider sx={{ my: 3, opacity: 0.3 }} />
+                
+                <FormSection>
+                  <SectionTitle variant="subtitle2">
+                    <BusinessIcon />
+                    Meeting Schedule
+                  </SectionTitle>
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Add your business meetings to keep track of your schedule during this trip
+                  </Typography>
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Meeting Title"
+                        name="title"
+                        value={meetingForm.title}
+                        onChange={handleMeetingFormChange}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+              <TextField
+                        fullWidth
+                        label="Date"
+                        name="date"
+                type="date"
+                        value={meetingForm.date}
+                        onChange={handleMeetingFormChange}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                fullWidth
+                        label="Time"
+                        name="time"
+                        type="time"
+                        value={meetingForm.time}
+                        onChange={handleMeetingFormChange}
+                InputLabelProps={{ shrink: true }}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+              />
+                    </Grid>
+                    <Grid item xs={12}>
+              <TextField
+                fullWidth
+                        label="Location"
+                        name="location"
+                        value={meetingForm.location}
+                        onChange={handleMeetingFormChange}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                        label="Notes"
+                        name="notes"
+                        value={meetingForm.notes}
+                        onChange={handleMeetingFormChange}
+                  multiline
+                  rows={2}
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddMeeting}
+                        sx={{ borderRadius: '8px' }}
+                      >
+                        Add Meeting
+              </Button>
+                    </Grid>
+                  </Grid>
+                  
+                  {meetings.length > 0 && (
+                    <Paper 
+                      variant="outlined" 
+                      sx={{ 
+                        mt: 3,
+                        background: 'rgba(30, 30, 50, 0.4)',
+                        borderRadius: '10px',
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        maxHeight: '200px',
+                        overflow: 'auto'
+                      }}
+                    >
+                      <List dense>
+                        {meetings.map((meeting) => (
+                          <ListItem key={meeting.id} divider>
+                            <ListItemText
+                              primary={meeting.title}
+                              secondary={
+                                <>
+                                  <Typography component="span" variant="body2" color="text.secondary">
+                                    {meeting.date} at {meeting.time}
+                                  </Typography>
+                                  <br />
+                                  <Typography component="span" variant="body2" color="text.secondary">
+                                    {meeting.location}
+                                  </Typography>
+                                </>
+                              }
+                            />
+                            <ListItemSecondaryAction>
+                              <IconButton 
+                                edge="end" 
+                                size="small" 
+                                onClick={() => handleRemoveMeeting(meeting.id)}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        ))}
+                      </List>
+          </Paper>
+                  )}
+                </FormSection>
+              </>
+            )}
+            
             {error && (
               <Alert 
                 severity="error" 
@@ -457,6 +674,6 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
           </Button>
         </StyledDialogActions>
       </StyledDialog>
-    </Container>
+      </Container>
   );
 }

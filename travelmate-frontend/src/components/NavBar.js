@@ -46,6 +46,7 @@ const NavBar = ({ onSearch, isAuthenticated, setIsAuthenticated }) => {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('username');
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('traveler_type');
     
     // Update parent component's auth state if provided
     if (typeof setIsAuthenticated === 'function') {
