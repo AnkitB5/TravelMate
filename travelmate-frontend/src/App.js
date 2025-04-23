@@ -18,6 +18,7 @@ import TripDetails from './components/TripDetails';
 import WeatherDetails from './components/WeatherDetails';
 import PackingList from './components/PackingList';
 import TravelTips from './components/TravelTips';
+import MeetingsView from './components/MeetingsView';
 import PrivateRoute from './components/PrivateRoute';
 import PasswordResetRequest from './components/PasswordResetRequest';
 import PasswordResetConfirm from './components/PasswordResetConfirm';
@@ -192,6 +193,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <TravelTips />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/trips/:tripId/meetings"
+              element={
+                <PrivateRoute>
+                  <MeetingsView />
                 </PrivateRoute>
               }
             />

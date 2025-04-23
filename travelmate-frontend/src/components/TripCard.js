@@ -16,6 +16,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import BusinessIcon from '@mui/icons-material/Business';
 import EditTripForm from './EditTripForm';
 import api from '../services/api';
 
@@ -23,13 +24,36 @@ const UNSPLASH_ACCESS_KEY = 'rBjgQnvzMAXOKL6EFmP1ZnV_TmbdIeqxJ4ZtowVZVGY';
 
 const TripCard = ({ trip, onTripUpdated, onDelete }) => {
   const navigate = useNavigate();
-  const { id, destination, travel_start, travel_end, imageUrl, description } = trip;
+  const { id, destination, travel_start, travel_end, imageUrl, description, traveler_type } = trip;
   const startDate = new Date(travel_start);
   const endDate = new Date(travel_end);
   const tripDuration = Math.ceil(
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
   );
   const [dynamicImage, setDynamicImage] = useState('');
+  const [isBusinessTraveler, setIsBusinessTraveler] = useState(false);
+  const [hasMeetings, setHasMeetings] = useState(false);
+
+  useEffect(() => {
+    // Check if user is a business traveler
+    const userTravelerType = localStorage.getItem('traveler_type');
+    console.log('TripCard - User traveler type:', userTravelerType);
+    console.log('TripCard - Trip traveler type:', traveler_type);
+    setIsBusinessTraveler(userTravelerType === 'business' || traveler_type === 'business');
+    
+    // Check if trip has meetings
+    if (trip.meeting_schedule) {
+      try {
+        const meetingData = typeof trip.meeting_schedule === 'string' 
+          ? JSON.parse(trip.meeting_schedule) 
+          : trip.meeting_schedule;
+        setHasMeetings(Array.isArray(meetingData) && meetingData.length > 0);
+      } catch (err) {
+        console.error('Error parsing meeting schedule:', err);
+        setHasMeetings(false);
+      }
+    }
+  }, [trip, traveler_type]);
 
   useEffect(() => {
     if (!imageUrl && destination) {
@@ -106,6 +130,19 @@ const TripCard = ({ trip, onTripUpdated, onDelete }) => {
             View Details
           </Button>
 
+          {/* Business Meeting Button - Only show for business travelers */}
+          {isBusinessTraveler && (
+            <Button
+              variant="outlined"
+              fullWidth
+              color="primary"
+              startIcon={<BusinessIcon />}
+              onClick={() => navigate(`/trips/${id}/meetings`)}
+            >
+              View Meetings
+            </Button>
+          )}
+
           <Button
             variant="contained"
             fullWidth
@@ -130,7 +167,7 @@ const TripCard = ({ trip, onTripUpdated, onDelete }) => {
             View Packing List
           </Button>
 
-          {/* New Travel Tips button */}
+          {/* Travel Tips button */}
           <Button
             variant="outlined"
             fullWidth
