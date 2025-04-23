@@ -1,7 +1,7 @@
 // src/components/Footer.js
 import React from 'react';
 import { Box, Container, Typography, Link, IconButton } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Facebook as FacebookIcon,
   Twitter as TwitterIcon,
@@ -12,12 +12,6 @@ import logo from '../assets/travelmate logo/1-removebg-preview.png';
 
 const Footer = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  // Only show footer on the home page
-  if (pathname !== '/') {
-    return null;
-  }
 
   return (
     <Box sx={{ backgroundColor: '#f5f5f5', py: 4, mt: 4 }}>
@@ -30,22 +24,30 @@ const Footer = () => {
         }}
       >
         {/* Logo + Description */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <Box
+        <Box
+        sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+        }}
+        >
+        <Box
             onClick={() => navigate('/')}
             sx={{ height: 100, width: 'fit-content', cursor: 'pointer', mb: 2 }}
-          >
+        >
             <Box
-              component="img"
-              src={logo}
-              alt="Travel Mate Logo"
-              sx={{ height: '150%' }}
+            component="img"
+            src={logo}
+            alt="Travel Mate Logo"
+            sx={{ height: '150%' }}
             />
-          </Box>
-          <Typography variant="body2" color="text.secondary" maxWidth={300}>
-            Your trusted companion for unforgettable travel experiences. Plan, explore, and discover the world with Travel Mate.
-          </Typography>
         </Box>
+        <Typography variant="body2" color="text.secondary" maxWidth={300}>
+            Your trusted companion for unforgettable travel experiences. Plan, explore, and discover the world with Travel Mate.
+        </Typography>
+        </Box>
+
+        
 
         {/* Quick Links */}
         <Box sx={{ flex: 1 }}>

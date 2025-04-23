@@ -1,7 +1,4 @@
 import requests
-import logging
-
-logger = logging.getLogger(__name__)
 
 class GeocodingService:
     """Service to handle geocoding (converting place names to coordinates)"""
@@ -20,7 +17,6 @@ class GeocodingService:
             tuple: (latitude, longitude) or (None, None) if not found
         """
         try:
-            # First try with the full location name
             params = {
                 'name': location_name,
                 'count': 1,
@@ -34,30 +30,12 @@ class GeocodingService:
             
             if data and 'results' in data and len(data['results']) > 0:
                 result = data['results'][0]
-                logger.info(f"Found coordinates for {location_name}: {result['latitude']}, {result['longitude']}")
                 return result['latitude'], result['longitude']
             
-            # If no results found, try with just the city name
-            city_name = location_name.split(',')[0].strip()
-            if city_name != location_name:
-                params['name'] = city_name
-                response = requests.get(GeocodingService.BASE_URL, params=params)
-                response.raise_for_status()
-                data = response.json()
-                
-                if data and 'results' in data and len(data['results']) > 0:
-                    result = data['results'][0]
-                    logger.info(f"Found coordinates for {city_name}: {result['latitude']}, {result['longitude']}")
-                    return result['latitude'], result['longitude']
-            
-            logger.warning(f"No coordinates found for location: {location_name}")
             return None, None
             
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error during geocoding for {location_name}: {str(e)}")
-            return None, None
-        except Exception as e:
-            logger.error(f"Unexpected error during geocoding for {location_name}: {str(e)}")
+            print(f"Error during geocoding: {e}")
             return None, None
     
     @staticmethod
@@ -108,8 +86,5 @@ class GeocodingService:
             return cities
             
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error searching cities for {query}: {str(e)}")
-            return []
-        except Exception as e:
-            logger.error(f"Unexpected error searching cities for {query}: {str(e)}")
+            print(f"Error searching cities: {e}")
             return [] 

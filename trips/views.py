@@ -15,27 +15,12 @@ from rest_framework import status
 from .services.weather_service import WeatherService
 from .services.geocoding_service import GeocodingService
 from datetime import datetime
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth.tokens import default_token_generator
-from django.urls import reverse
-from django.conf import settings
-from django.core.mail import EmailMessage
-import os
-import requests
-import traceback
-from django.shortcuts import redirect
-from django.http import HttpResponseNotAllowed
 
 # API Views (for JSON endpoints)
 class TripListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Trip.objects.all()
     serializer_class = TripSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Trip.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         # Check if coordinates are provided from frontend
@@ -104,7 +89,7 @@ def user_stories(request):
 
 def trip_dashboard(request):
     from .models import Trip
-    trips = Trip.objects.filler(user = request.user)
+    trips = Trip.objects.all()
     return render(request, 'trips/trip_dashboard.html', {'trips': trips})
 
 
@@ -118,32 +103,19 @@ def signup(request):
             
         username = data.get('username')
         password = data.get('password')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        email = data.get('email')
-        traveler_type = data.get('traveler_type')
+        traveler_type = data.get('traveler_type')  # New field from the request
 
-        if not all([username, password, first_name, last_name, email]):
-            return JsonResponse({'error': 'All fields are required.'}, status=400)
+        if not username or not password:
+            return JsonResponse({'error': 'Username and password are required.'}, status=400)
         
         if traveler_type not in ['casual', 'business']:
             return JsonResponse({'error': 'Traveler type must be "casual" or "business".'}, status=400)
 
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists.'}, status=400)
-            
-        if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Email already exists.'}, status=400)
+            return JsonResponse({'error': 'User already exists.'}, status=400)
 
-        # Create the user with additional fields
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            email=email
-        )
-        
+        # Create the user
+        user = User.objects.create_user(username=username, password=password)
         # Create a corresponding Profile for the new user
         Profile.objects.create(user=user, traveler_type=traveler_type)
 
@@ -382,137 +354,3 @@ def search_cities(request):
         "count": len(cities),
         "cities": cities
     })
-
-@csrf_exempt
-def password_reset_request(request):
-    if request.method == 'GET':
-        # render the HTML form
-        return render(request, 'password_reset.html')
-
-    if request.method == 'POST':
-        # JSON body?
-        if request.content_type.startswith('application/json'):
-            try:
-                data = json.loads(request.body)
-                email = data.get('email')
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-        else:
-            # form submit
-            email = request.POST.get('email')
-
-        if not email:
-            error = 'Email is required.'
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'error': error}, status=400)
-            return render(request, 'password_reset.html', {'error': error})
-
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            # always succeed to avoid leaking
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'message': 'If an account exists with this email, you will receive instructions.'})
-            return render(request, 'password_reset.html', {
-                'message': 'If an account exists with this email, you will receive instructions.'
-            })
-
-        # generate token + uid
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_url = request.build_absolute_uri(
-            reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
-        )
-
-        # render and send via Mailgun (or console)
-        subject = 'Your TravelMate Password Reset'
-        html_message = render_to_string('password_reset_email.html', {
-            'user': user,
-            'reset_url': reset_url,
-        })
-
-        try:
-            MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
-            MAILGUN_DOMAIN  = os.getenv('MAILGUN_DOMAIN')
-            response = requests.post(
-                f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
-                auth=("api", MAILGUN_API_KEY),
-                data={
-                    "from":    f"TravelMate <postmaster@{MAILGUN_DOMAIN}>",
-                    "to":      [email],
-                    "subject": subject,
-                    "html":    html_message,
-                }
-            )
-        except Exception:
-            traceback.print_exc()
-            # swallow
-
-        if request.content_type.startswith('application/json'):
-            return JsonResponse({'message': 'If an account exists with this email, you will receive instructions.'})
-        return render(request, 'password_reset.html', {
-            'message': 'If an account exists with this email, you will receive instructions.'
-        })
-
-@csrf_exempt
-def password_reset_confirm(request, uidb64, token):
-    # Decode the UID
-    try:
-        uid  = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except Exception:
-        user = None
-
-    if request.method == 'GET':
-        # render form
-        return render(request, 'password_reset_confirm.html', {
-            'uidb64': uidb64,
-            'token': token,
-            'error': None,
-        })
-
-    if request.method == 'POST':
-        # get new password
-        if request.content_type.startswith('application/json'):
-            try:
-                data = json.loads(request.body)
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-            new_password = data.get('password')
-            confirm      = None
-        else:
-            new_password = request.POST.get('password')
-            confirm      = request.POST.get('confirm_password')
-
-        if not new_password:
-            msg = 'Password is required.'
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'error': msg}, status=400)
-            return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
-            })
-
-        if confirm is not None and new_password != confirm:
-            msg = 'Passwords do not match.'
-            return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
-            })
-
-        if user is None or not default_token_generator.check_token(user, token):
-            msg = 'Invalid or expired link.'
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'error': msg}, status=400)
-            return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
-            })
-
-        # all good—actually set the password
-        user.set_password(new_password)
-        user.save()
-
-        if request.content_type.startswith('application/json'):
-            return JsonResponse({'message': 'Password has been reset successfully.'})
-        # redirect to login or show a success page
-        return redirect('login')  # or wherever your login URL is
-
-    return HttpResponseNotAllowed(['GET', 'POST'])

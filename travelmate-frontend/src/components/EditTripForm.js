@@ -6,14 +6,7 @@ import {
   DialogActions,
   TextField,
   Button,
-  Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Box,
-  Typography
+  Alert
 } from '@mui/material';
 import CitySearch from './CitySearch';
 import api from '../services/api';
@@ -23,21 +16,12 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
     destination: '',
     travel_start: '',
     travel_end: '',
-    activities: [],
+    activities: '',
     meeting_schedule: ''
   });
   const [selectedCity, setSelectedCity] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [availableActivities, setAvailableActivities] = useState([
-    { id: 1, name: 'Hiking' },
-    { id: 2, name: 'Beach' },
-    { id: 3, name: 'Sightseeing' },
-    { id: 4, name: 'Business' },
-    { id: 5, name: 'Shopping' },
-    { id: 6, name: 'Dining' }
-  ]);
-  const [selectedActivities, setSelectedActivities] = useState([]);
 
   useEffect(() => {
     if (trip) {
@@ -45,7 +29,7 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
         destination: trip.destination || '',
         travel_start: trip.travel_start || '',
         travel_end: trip.travel_end || '',
-        activities: trip.activities || [],
+        activities: trip.activities || '',
         meeting_schedule: trip.meeting_schedule || ''
       });
       
@@ -57,17 +41,6 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
           latitude: trip.latitude,
           longitude: trip.longitude
         });
-      }
-
-      // Parse activities if they're stored as a string
-      try {
-        const parsedActivities = typeof trip.activities === 'string' 
-          ? JSON.parse(trip.activities)
-          : trip.activities;
-        setSelectedActivities(parsedActivities);
-      } catch (e) {
-        console.error('Error parsing activities:', e);
-        setSelectedActivities([]);
       }
     }
   }, [trip]);
@@ -89,17 +62,6 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
     }
   };
 
-  const handleActivitySelect = (event) => {
-    const activityId = event.target.value;
-    if (activityId && !selectedActivities.includes(activityId)) {
-      setSelectedActivities([...selectedActivities, activityId]);
-    }
-  };
-
-  const handleActivityRemove = (activityId) => {
-    setSelectedActivities(selectedActivities.filter(id => id !== activityId));
-  };
-
   const handleSubmit = async () => {
     // Validate city selection
     if (!selectedCity) {
@@ -110,12 +72,11 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
     try {
       setLoading(true);
       
-      // Prepare the data with coordinates and activities
+      // Prepare the data with coordinates
       const updateData = {
         ...formData,
         latitude: selectedCity.latitude,
-        longitude: selectedCity.longitude,
-        activities: JSON.stringify(selectedActivities)
+        longitude: selectedCity.longitude
       };
       
       // Make the API call to update the trip
@@ -171,38 +132,16 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
           required
         />
         
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Add Activities</InputLabel>
-          <Select
-            value=""
-            onChange={handleActivitySelect}
-            label="Add Activities"
-          >
-            {availableActivities.map((activity) => (
-              <MenuItem key={activity.id} value={activity.id}>
-                {activity.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Selected Activities:
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {selectedActivities.map((activityId) => {
-              const activity = availableActivities.find(a => a.id === activityId);
-              return activity ? (
-                <Chip
-                  key={activityId}
-                  label={activity.name}
-                  onDelete={() => handleActivityRemove(activityId)}
-                />
-              ) : null;
-            })}
-          </Box>
-        </Box>
+        <TextField
+          label="Activities"
+          name="activities"
+          multiline
+          rows={2}
+          value={formData.activities}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
         
         {localStorage.getItem('traveler_type') === 'business' && (
           <TextField
