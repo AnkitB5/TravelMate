@@ -16,6 +16,8 @@ const Signup = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [recommendations, setRecommendations] = useState(null);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -35,6 +37,18 @@ const Signup = () => {
     } catch (err) {
       console.error('Signup error:', err);
       setError(err.response?.data?.error || 'Signup failed. Please try again.');
+    }
+  };
+
+  const fetchRecommendations = async (tripId) => {
+    try {
+      setLoadingRecommendations(true);
+      const response = await api.get(`/api/trips/${tripId}/recommendations/`);
+      setRecommendations(response.data);
+    } catch (err) {
+      setError('Failed to fetch recommendations. Please try again.');
+    } finally {
+      setLoadingRecommendations(false);
     }
   };
 

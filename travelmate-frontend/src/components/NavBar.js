@@ -1,142 +1,103 @@
 // src/components/Navbar.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
   Button,
   Box,
-  InputBase,
+  TextField,
+  InputAdornment,
+  Typography,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import { alpha, styled } from '@mui/material/styles';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import logo from '../assets/travelmate logo/1-removebg-preview.png';
 
-// Styled Search container with a white background and light border
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: '#fff',
-  border: '1px solid #ccc',
-  marginRight: theme.spacing(2),
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    width: '20ch',
-  },
-}));
-
-// Styled container for the search icon with black color
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 1),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '#000',
-}));
-
-// Styled input for the search bar ensuring black text and placeholder
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: '#000',
-  fontSize: 16,
-  width: '100%',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // make room for the search icon
-    paddingLeft: `calc(1em + ${theme.spacing(3)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    '&::placeholder': {
-      color: '#000',
-      opacity: 1,
-    },
-  },
-}));
-
-const Navbar = () => {
+const NavBar = ({ onSearch }) => {
+  const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const token = localStorage.getItem('access_token');
+  const isLoggedIn = !!localStorage.getItem('access_token');
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('traveler_type');
-    navigate('/');
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    if (onSearch) {
+      onSearch(query);
+    }
   };
-  
+
+  const showSearchBar = location.pathname === '/dashboard' || location.pathname === '/trips';
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        backgroundColor: '#fff',
-        boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
-        px: 2,
-        py: 1,
-      }}
-    >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        {/* Left side: Logo */}
-        <Box
-          onClick={() => navigate('/')}
+    <AppBar position="static" color="primary" sx={{ mb: 4 }}>
+      <Toolbar>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/"
           sx={{
-            height: 50,
-            display: 'flex',
-            alignItems: 'center',
-            cursor: 'pointer',
-            userSelect: 'none',
+            flexGrow: 1,
+            textDecoration: 'none',
+            color: 'inherit',
+            fontWeight: 'bold'
           }}
         >
-          <Box
-            component="img"
-            src={logo}
-            alt="Travel Mate Logo"
-            sx={{
-              height: '100%',
-              transform: 'scale(3)',
-              transformOrigin: 'left center',
-            }}
-          />
-        </Box>
+          TravelMate
+        </Typography>
 
-        {/* Right side: Search Bar and Navigation Buttons */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {/* Search Bar */}
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
+        {showSearchBar && (
+          <Box sx={{ mx: 2 }}>
+            <TextField
+              size="small"
+              placeholder="Search trips..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              sx={{
+                width: 300,
+                '& .MuiInputBase-root': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                  </InputAdornment>
+                ),
+              }}
             />
-          </Search>
+          </Box>
+        )}
 
-          {/* Navigation Buttons */}
-          {token ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {isLoggedIn ? (
             <>
               <Button
                 component={Link}
                 to="/dashboard"
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
-                }}
+                sx={{ color: 'white' }}
               >
                 Dashboard
               </Button>
               <Button
-                onClick={handleLogout}
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
+                onClick={() => {
+                  localStorage.removeItem('access_token');
+                  localStorage.removeItem('refresh_token');
+                  localStorage.removeItem('username');
+                  localStorage.removeItem('isAuthenticated');
+                  navigate('/');
                 }}
+                sx={{ color: 'white' }}
               >
                 Logout
               </Button>
@@ -146,48 +107,28 @@ const Navbar = () => {
               <Button
                 component={Link}
                 to="/"
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
-                }}
+                sx={{ color: 'white' }}
               >
                 Home
               </Button>
               <Button
                 component={Link}
                 to="/about"
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
-                }}
+                sx={{ color: 'white' }}
               >
                 About Us
               </Button>
               <Button
                 component={Link}
                 to="/login"
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
-                }}
+                sx={{ color: 'white' }}
               >
                 Login
               </Button>
               <Button
                 component={Link}
                 to="/signup"
-                sx={{
-                  textTransform: 'none',
-                  color: '#000',
-                  fontSize: '16px',
-                  mx: 1,
-                }}
+                sx={{ color: 'white' }}
               >
                 Sign Up
               </Button>
@@ -199,4 +140,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavBar;

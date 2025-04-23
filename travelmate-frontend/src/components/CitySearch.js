@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  TextField,
   Autocomplete,
+  TextField,
   CircularProgress,
-  Box,
-  Typography
+  Box
 } from '@mui/material';
 import api from '../services/api';
 
@@ -12,58 +11,27 @@ const CitySearch = ({ value, onChange, error, helperText }) => {
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchTimeout, setSearchTimeout] = useState(null);
 
-  // Clear options when component mounts
-  useEffect(() => {
-    setOptions([]);
-    return () => {
-      if (searchTimeout) clearTimeout(searchTimeout);
-    };
-  }, []);
-
-  // Function to search cities
-  const searchCities = async (query) => {
-    if (!query || query.length < 2) {
+  const handleInputChange = async (event, newInputValue) => {
+    setInputValue(newInputValue);
+    
+    if (newInputValue.length < 2) {
       setOptions([]);
-      setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
       const response = await api.get('/api/cities/search/', {
-        params: { q: query, limit: 15 }
+        params: { q: newInputValue }
       });
-      
-      if (response.data && response.data.cities) {
-        setOptions(response.data.cities);
-      } else {
-        setOptions([]);
-      }
-    } catch (error) {
-      console.error('Error searching cities:', error);
+      setOptions(response.data.cities || []);
+    } catch (err) {
+      console.error('Error searching cities:', err);
       setOptions([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Handle input change with debounce
-  const handleInputChange = (event, newInputValue) => {
-    setInputValue(newInputValue);
-    
-    // Clear previous timeout
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    
-    // Set new timeout for debouncing
-    const timeout = setTimeout(() => {
-      searchCities(newInputValue);
-    }, 500); // 500ms debounce
-    
-    setSearchTimeout(timeout);
   };
 
   return (
@@ -80,17 +48,14 @@ const CitySearch = ({ value, onChange, error, helperText }) => {
         option.latitude === value.latitude && 
         option.longitude === value.longitude
       }
-      noOptionsText="No cities found. Try a different search term."
       loading={loading}
-      fullWidth
       renderInput={(params) => (
         <TextField
           {...params}
           label="Destination"
-          variant="outlined"
-          error={!!error}
+          fullWidth
+          error={error}
           helperText={helperText}
-          required
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -105,10 +70,10 @@ const CitySearch = ({ value, onChange, error, helperText }) => {
       renderOption={(props, option) => (
         <li {...props}>
           <Box>
-            <Typography variant="body1">{option.name}</Typography>
-            <Typography variant="body2" color="text.secondary">
+            <div>{option.name}</div>
+            <div style={{ fontSize: '0.8em', color: '#666' }}>
               {option.admin1}{option.admin1 && option.country ? ', ' : ''}{option.country}
-            </Typography>
+            </div>
           </Box>
         </li>
       )}
