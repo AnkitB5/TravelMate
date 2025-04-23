@@ -34,11 +34,15 @@ const GoogleAuthButton = ({ setIsAuthenticated, buttonText = "Continue with Goog
       }
       
       console.log('Sending token to backend...');
+
       const res = await fetch("http://localhost:8000/api/auth/google/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          access_token: credentialResponse.credential
+          // allauth needs the JWT here:
+          id_token:    token,
+          access_token: token,
+          provider:     "google"
         }),
       });
       

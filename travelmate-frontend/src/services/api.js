@@ -13,24 +13,14 @@ const api = axios.create({
 });
 
 // Add a request interceptor to add the auth token to requests
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    
-    if (token) {
-      console.log(`Adding auth token to ${config.method.toUpperCase()} ${config.url}`);
-      config.headers.Authorization = `Bearer ${token}`;
-    } else {
-      console.log(`No auth token available for ${config.method.toUpperCase()} ${config.url}`);
-    }
-    
-    return config;
-  },
-  (error) => {
-    console.error('Request interceptor error:', error);
-    return Promise.reject(error);
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    // switch to Token <key> instead of Bearer <key>
+    config.headers.Authorization = `Token ${token}`;
   }
-);
+  return config;
+});
 
 // Add a response interceptor to handle token refresh and errors
 api.interceptors.response.use(

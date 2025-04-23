@@ -12,7 +12,7 @@ else:
 
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-fallback-only-for-dev")
-DEBUG      = False
+DEBUG      = os.getenv("DEBUG", "False").lower() in ("true", "1")
 ALLOWED_HOSTS = ['http://18.118.238.99/',    "18.118.238.99", "localhost", "127.0.0.1"]  # Development hosts
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
