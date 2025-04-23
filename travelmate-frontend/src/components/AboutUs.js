@@ -125,6 +125,28 @@ const AboutUs = () => {
               </CardContent>
             </Card>
           </Grid>
+          {/* Team Member 5 */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ textAlign: 'center' }}>
+              <CardMedia
+                component="img"
+                height="180"
+                image="https://via.placeholder.com/180x180?text=Developer"
+                alt="Developer"
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  Bharat Khadka
+                </Typography>
+                <Typography variant="subtitle1" color="primary">
+                  Full-Stack Developer
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  Developing both client and server software.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
       </Container>
 
