@@ -34,19 +34,11 @@ const GoogleAuthButton = ({ setIsAuthenticated, buttonText = "Continue with Goog
       }
       
       console.log('Sending token to backend...');
-      const res = await fetch('http://localhost:8000/api/auth/google/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          // Try multiple formats to handle different backend implementations
-          id_token: token,
-          access_token: token,
-          code: token,
-          // Add some debugging info to help identify the format issue
-          token_type: 'id_token',
-          provider: 'google-oauth2'
+      const res = await fetch("http://localhost:8000/api/auth/google/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_token: credentialResponse.credential
         }),
       });
       

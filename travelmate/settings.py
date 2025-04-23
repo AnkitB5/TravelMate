@@ -13,7 +13,7 @@ else:
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-fallback-only-for-dev")
 DEBUG      = False
-ALLOWED_HOSTS = ['http://18.118.238.99/']  # Development hosts
+ALLOWED_HOSTS = ['http://18.118.238.99/',    "18.118.238.99", "localhost", "127.0.0.1"]  # Development hosts
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -99,9 +99,15 @@ USE_TZ        = True
 STATIC_URL    = "/static/"
 
 # ─── CORS / CSRF ─────────────────────────────────────────────────────────────
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS   = ["http://localhost:3000"]
-CSRF_TRUSTED_ORIGINS   = ["http://localhost:3000"]
+CORS_ALLOW_ALL_ORIGINS    = False
+CORS_ALLOWED_ORIGINS      = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+CSRF_TRUSTED_ORIGINS      = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
 # ─── REST Framework ──────────────────────────────────────────────────────────
 REST_FRAMEWORK = {
@@ -120,9 +126,19 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-ACCOUNT_EMAIL_REQUIRED = True
+EMAIL_BACKEND    = os.getenv("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST       = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT       = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS    = True
+EMAIL_HOST_USER  = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"   
+ACCOUNT_EMAIL_REQUIRED     = True          
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True        
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"    
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
