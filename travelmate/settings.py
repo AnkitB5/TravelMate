@@ -12,8 +12,8 @@ else:
 
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-fallback-only-for-dev")
-DEBUG      = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']  # Development hosts
+DEBUG      = False
+ALLOWED_HOSTS = ['http://18.118.238.99/']  # Development hosts
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
 INSTALLED_APPS = [
