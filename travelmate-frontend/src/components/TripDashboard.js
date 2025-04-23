@@ -18,12 +18,20 @@ import {
   CircularProgress,
   Alert,
   Chip,
-  FormHelperText
+  FormHelperText,
+  Divider,
+  Paper,
+  IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import HomeIcon from '@mui/icons-material/Home';
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
+import FlightLandIcon from '@mui/icons-material/FlightLand';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CloseIcon from '@mui/icons-material/Close';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import api from '../services/api';
 import CitySearch from './CitySearch';
 import TripCard from './TripCard';
@@ -31,46 +39,91 @@ import TripCard from './TripCard';
 const StyledDialog = styled(Dialog)`
   & .MuiDialog-paper {
     border-radius: 16px;
-    padding: 24px;
+    padding: 0;
+    overflow: visible;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 `;
+
+const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
+  background: 'linear-gradient(90deg, rgba(30,30,60,0.8) 0%, rgba(60,60,90,0.8) 100%)',
+  color: '#fff',
+  padding: theme.spacing(3),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+}));
+
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  padding: theme.spacing(4),
+}));
+
+const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
+  padding: theme.spacing(2, 4, 3),
+  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+}));
+
+const FormSection = styled(Box)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+}));
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  fontSize: '0.95rem',
+  fontWeight: 600,
+  color: theme.palette.primary.main,
+  marginBottom: theme.spacing(2),
+  display: 'flex',
+  alignItems: 'center',
+  '& svg': {
+    marginRight: theme.spacing(1),
+  }
+}));
 
 export default function TripDashboard({ searchQuery: propSearchQuery }) {
   const navigate = useNavigate();
 
-  // --- state ---
+  // trips + UI state
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // dialog form state
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState(null);
-
-  // form inputs
   const [selectedCity, setSelectedCity] = useState(null);
   const [formData, setFormData] = useState({ travel_start: '', travel_end: '' });
   const [selectedActivities, setSelectedActivities] = useState([]);
-  const [availableActivities] = useState([
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const availableActivities = [
     { id: 1, name: 'Hiking' },
     { id: 2, name: 'Beach' },
     { id: 3, name: 'Sightseeing' },
     { id: 4, name: 'Dining' },
     { id: 5, name: 'Shopping' },
     { id: 6, name: 'Business' },
-  ]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  ];
 
-  // search
+  // ** Local searchQuery state, initialized from prop **
   const [searchQuery, setSearchQuery] = useState(propSearchQuery || '');
 
-  // --- load trips + dedupe ---
-  useEffect(() => { fetchTrips() }, []);
+  // ** Sync local searchQuery whenever the prop changes **
+  useEffect(() => {
+    if (propSearchQuery !== undefined) {
+      setSearchQuery(propSearchQuery);
+    }
+  }, [propSearchQuery]);
+
+  // Fetch trips & dedupe
+  useEffect(() => { fetchTrips(); }, []);
   async function fetchTrips() {
     setLoading(true);
     try {
       const res = await api.get('/api/trips/');
-      // keep only first occurrence of same destination+dates
       const seen = new Set();
       const deduped = res.data.filter(trip => {
         const key = `${trip.destination}|${trip.travel_start}|${trip.travel_end}`;
@@ -87,15 +140,15 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     }
   }
 
-  // --- apply search filter ---
+  // Apply search filter when either `trips` or `searchQuery` changes
   useEffect(() => {
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       setFilteredTrips(
         trips.filter(t =>
           t.destination.toLowerCase().includes(q) ||
-          t.travel_start.includes(q) ||
-          t.travel_end.includes(q)
+          (t.travel_start && t.travel_start.toLowerCase().includes(q)) ||
+          (t.travel_end && t.travel_end.toLowerCase().includes(q))
         )
       );
     } else {
@@ -103,14 +156,13 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     }
   }, [searchQuery, trips]);
 
-  // --- open / close dialog ---
+  // --- Dialog open/close & form handlers ---
   function handleOpenDialog(trip = null) {
     setError(null);
     if (trip) {
       setSelectedTrip(trip);
       setSelectedCity({ display_name: trip.destination });
       setFormData({ travel_start: trip.travel_start, travel_end: trip.travel_end });
-      // prefill activities if stored as JSON array
       const acts = Array.isArray(trip.activities)
         ? trip.activities.map(id => availableActivities.find(a => a.id === id)).filter(Boolean)
         : [];
@@ -128,7 +180,6 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     setError(null);
   }
 
-  // --- activities pick/remove ---
   function handleActivitySelect(e) {
     const id = e.target.value;
     const act = availableActivities.find(a => a.id === id);
@@ -140,31 +191,22 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     setSelectedActivities(prev => prev.filter(a => a.id !== id));
   }
 
-  // --- submit new / edit ---
+  // Submit create or edit
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
 
-    if (!selectedCity) {
-      setError('Please select a destination.');
-      return;
-    }
-    if (!formData.travel_start || !formData.travel_end) {
-      setError('Both start and end dates are required.');
-      return;
-    }
+    if (!selectedCity) return setError('Please select a destination.');
+    if (!formData.travel_start || !formData.travel_end) return setError('Both start and end dates are required.');
 
-    // on create, block exact duplicates
+    // prevent duplicates on create
     if (!selectedTrip) {
       const exists = trips.some(t =>
         t.destination === selectedCity.display_name &&
         t.travel_start === formData.travel_start &&
         t.travel_end === formData.travel_end
       );
-      if (exists) {
-        setError('You already have a trip to that place on those dates.');
-        return;
-      }
+      if (exists) return setError('You already have a trip to that place on those dates.');
     }
 
     setIsSubmitting(true);
@@ -189,6 +231,7 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     }
   }
 
+  // loading state
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -240,71 +283,179 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
       )}
 
       <StyledDialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-        <DialogTitle>{selectedTrip ? 'Edit Trip' : 'Add New Trip'}</DialogTitle>
-        <DialogContent>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-            <CitySearch
-              value={selectedCity}
-              onChange={setSelectedCity}
-              helperText="Select a destination"
-            />
-
-            <TextField
-              fullWidth
-              label="Start Date"
-              type="date"
-              margin="normal"
-              value={formData.travel_start}
-              onChange={e => setFormData(fd => ({ ...fd, travel_start: e.target.value }))}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <TextField
-              fullWidth
-              label="End Date"
-              type="date"
-              margin="normal"
-              value={formData.travel_end}
-              onChange={e => setFormData(fd => ({ ...fd, travel_end: e.target.value }))}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Activities</InputLabel>
-              <Select value="" onChange={handleActivitySelect} label="Activities">
-                <MenuItem value=""><em>None</em></MenuItem>
-                {availableActivities.map(a => (
-                  <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Select one at a time</FormHelperText>
-            </FormControl>
-
-            {selectedActivities.length > 0 && (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                {selectedActivities.map(a => (
-                  <Chip
-                    key={a.id}
-                    label={a.name}
-                    onDelete={() => handleActivityRemove(a.id)}
+        <StyledDialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <FlightTakeoffIcon sx={{ mr: 1.5 }} />
+            <Typography variant="h6">
+              {selectedTrip ? 'Edit Trip' : 'Plan New Adventure'}
+            </Typography>
+          </Box>
+          <IconButton onClick={handleCloseDialog} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            <CloseIcon />
+          </IconButton>
+        </StyledDialogTitle>
+        
+        <StyledDialogContent>
+          <Box component="form" onSubmit={handleSubmit}>
+            <FormSection>
+              <SectionTitle variant="subtitle2">
+                <LocationOnIcon />
+                Destination
+              </SectionTitle>
+              <CitySearch
+                value={selectedCity}
+                onChange={setSelectedCity}
+                helperText="Search for a city, region, or country"
+              />
+            </FormSection>
+            
+            <Divider sx={{ my: 3, opacity: 0.3 }} />
+            
+            <FormSection>
+              <SectionTitle variant="subtitle2">
+                <FlightTakeoffIcon />
+                Travel Dates
+              </SectionTitle>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Start Date"
+                    type="date"
+                    value={formData.travel_start}
+                    onChange={e => setFormData(fd => ({ ...fd, travel_start: e.target.value }))}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '10px',
+                      }
+                    }}
                   />
-                ))}
-              </Box>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="End Date"
+                    type="date"
+                    value={formData.travel_end}
+                    onChange={e => setFormData(fd => ({ ...fd, travel_end: e.target.value }))}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '10px',
+                      }
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </FormSection>
+            
+            <Divider sx={{ my: 3, opacity: 0.3 }} />
+            
+            <FormSection>
+              <SectionTitle variant="subtitle2">
+                <LocalActivityIcon />
+                Planned Activities
+              </SectionTitle>
+              <FormControl fullWidth>
+                <InputLabel>Select Activities</InputLabel>
+                <Select 
+                  value="" 
+                  onChange={handleActivitySelect} 
+                  label="Select Activities"
+                  sx={{
+                    borderRadius: '10px',
+                    mb: 1
+                  }}
+                >
+                  <MenuItem value=""><em>Choose an activity</em></MenuItem>
+                  {availableActivities.map(a => (
+                    <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>Select multiple activities for your trip</FormHelperText>
+              </FormControl>
+              
+              {selectedActivities.length > 0 && (
+                <Paper 
+                  variant="outlined" 
+                  sx={{ 
+                    mt: 2, 
+                    p: 2, 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    gap: 1,
+                    background: 'rgba(30, 30, 50, 0.4)',
+                    borderRadius: '10px',
+                    borderColor: 'rgba(255,255,255,0.1)'
+                  }}
+                >
+                  {selectedActivities.map(a => (
+                    <Chip
+                      key={a.id}
+                      label={a.name}
+                      onDelete={() => handleActivityRemove(a.id)}
+                      sx={{
+                        borderRadius: '8px',
+                        '& .MuiChip-deleteIcon': {
+                          color: 'rgba(255,255,255,0.7)',
+                          '&:hover': {
+                            color: 'white'
+                          }
+                        }
+                      }}
+                    />
+                  ))}
+                </Paper>
+              )}
+            </FormSection>
+            
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mt: 3, 
+                  borderRadius: '10px',
+                }}
+              >
+                {error}
+              </Alert>
             )}
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+        </StyledDialogContent>
+        
+        <StyledDialogActions>
+          <Button 
+            onClick={handleCloseDialog} 
+            sx={{ 
+              borderRadius: '10px',
+              px: 3,
+              color: 'rgba(255,255,255,0.7)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.05)'
+              }
+            }}
+          >
+            Cancel
+          </Button>
           <Button
             variant="contained"
             onClick={handleSubmit}
             disabled={isSubmitting}
+            startIcon={isSubmitting ? <CircularProgress size={16} /> : <FlightTakeoffIcon />}
+            sx={{ 
+              borderRadius: '10px',
+              px: 3,
+              '&.Mui-disabled': {
+                backgroundColor: 'rgba(144, 202, 249, 0.4)'
+              }
+            }}
           >
             {isSubmitting
-              ? (selectedTrip ? 'Updating…' : 'Creating…')
-              : (selectedTrip ? 'Update' : 'Create')}
+              ? (selectedTrip ? 'Updating...' : 'Creating...')
+              : (selectedTrip ? 'Update Trip' : 'Create Trip')}
           </Button>
-        </DialogActions>
+        </StyledDialogActions>
       </StyledDialog>
     </Container>
   );

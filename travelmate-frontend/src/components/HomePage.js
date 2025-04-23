@@ -1,45 +1,44 @@
-// src/components/HomePage.js
 import React from 'react';
 import { Box, Container, Typography, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-// MUI Icons for placeholders
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import BackpackIcon from '@mui/icons-material/Backpack';
-import CardGiftcardIcon from '@mui/icons-material/CardGiftcard'; // New icon for sixth bullet point
-
-import backgroundGif from '../assets/background.gif'; // Double-check this path
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 
 const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <Box>
-      {/* Top Section: Text and Image arranged horizontally with Flex */}
-      <Container
-        sx={{
-          py: 8,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
+    <Box
+      component="main"
+      sx={{
+        minHeight: 'calc(100vh - 0px)', // full viewport minus any sticky nav/footer
+        color: 'text.primary',
+        px: { xs: 2, md: 8 },
+        py: { xs: 6, md: 12 },
+      }}
+    >
+      {/* Top Hero */}
+      <Grid
+        container
+        spacing={4}
+        alignItems="center"
+        justifyContent="space-between"
       >
-        {/* Left Side (Text Content) */}
-        <Box sx={{ flex: 1, pr: 2 }}>
-          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
             Plan Your Dream Trip with AI Assistance
           </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 4 }}>
-            Discover hidden gems, create personalized itineraries, and streamline your travel plans effortlessly.
+          <Typography variant="h6" sx={{ mb: 4, color: 'text.secondary' }}>
+            Discover hidden gems, create personalized itineraries, streamline your travel plans—effortlessly.
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               variant="contained"
-              color="primary" //#2196f3
+              color="primary"
               onClick={() => navigate('/signup')}
               sx={{ textTransform: 'none', borderRadius: '8px' }}
             >
@@ -48,124 +47,56 @@ const HomePage = () => {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => navigate('/about')} // To be implemented later
+              onClick={() => navigate('/about')}
               sx={{ textTransform: 'none', borderRadius: '8px' }}
             >
               About Us
             </Button>
           </Box>
-        </Box>
+        </Grid>
+        <Grid item xs={12} md={6} />
+      </Grid>
 
-        {/* Right Side (Image) */}
-        <Box sx={{ flex: 1, pl: 2 }}>
-          <Box
-            sx={{
-              width: '100%',
-              height: '300px',
-              borderRadius: 2,
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={backgroundGif}
-              alt="Trip planning illustration"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
-          </Box>
-        </Box>
-      </Container>
-
-      {/* Bullet-Point Style Graphics Section */}
-      <Box sx={{ backgroundColor: '#f5f5f5', py: 8 }}>
-        <Container>
-          <Typography variant="h4" align="center" sx={{ fontWeight: 'bold', mb: 4 }}>
-            Why Choose TravelMate
-          </Typography>
-          <Grid container spacing={2} justifyContent="center">
-            {/* 1: AI-Powered Itineraries */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <TravelExploreIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  AI-Powered Itineraries
+      {/* Features */}
+      <Box sx={{ mt: { xs: 8, md: 16 } }}>
+        <Typography
+          variant="h4"
+          align="center"
+          sx={{ fontWeight: 700, mb: 4 }}
+        >
+          Why Choose TravelMate
+        </Typography>
+        <Grid container spacing={4} justifyContent="center">
+          {[
+            { icon: <TravelExploreIcon />, title: 'AI-Powered Itineraries', subtitle: 'Personalized suggestions for every traveler.' },
+            { icon: <TimelineIcon />, title: 'Interactive Timeline', subtitle: 'Drag-and-drop to organize your trip.' },
+            { icon: <LocationOnIcon />, title: 'Destination Discovery', subtitle: 'Explore new spots and hidden gems.' },
+            { icon: <TipsAndUpdatesIcon />, title: 'Smart Recommendations', subtitle: 'Weather-focused & trend-based advice.' },
+            { icon: <BackpackIcon />, title: 'Auto Packing Lists', subtitle: 'Instantly generate your packing list.' },
+            { icon: <CardGiftcardIcon />, title: 'Exclusive Deals', subtitle: 'Unlock personalized discounts.' },
+          ].map(({ icon, title, subtitle }, i) => (
+            <Grid key={i} item xs={12} sm={6} md={4} lg={2}>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  px: 2,
+                  py: 4,
+                  borderRadius: 2,
+                  backdropFilter: 'blur(6px)',
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                }}
+              >
+                {React.cloneElement(icon, { sx: { fontSize: 40, color: 'primary.main' } })}
+                <Typography variant="h6" sx={{ mt: 1, color: '#FFF' }}>
+                  {title}
                 </Typography>
-                <Typography variant="body2">
-                  Personalized suggestions for every traveler.
+                <Typography variant="body2" sx={{ color: '#DDD' }}>
+                  {subtitle}
                 </Typography>
               </Box>
             </Grid>
-
-            {/* 2: Interactive Trip Timeline */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <TimelineIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  Interactive Timeline
-                </Typography>
-                <Typography variant="body2">
-                  Drag-and-drop features to organize your itinerary.
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* 3: Destination Discovery */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <LocationOnIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  Destination Discovery
-                </Typography>
-                <Typography variant="body2">
-                  Explore new spots and hidden gems.
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* 4: Smart Recommendations */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <TipsAndUpdatesIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  Smart Recommendations
-                </Typography>
-                <Typography variant="body2">
-                  Weather-focused and trend-based advice.
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* 5: Auto-Generated Packing */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <BackpackIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  Auto Packing Lists
-                </Typography>
-                <Typography variant="body2">
-                  Instantly generate customized lists.
-                </Typography>
-              </Box>
-            </Grid>
-
-            {/* 6: Exclusive Deals */}
-            <Grid item xs={12} sm={6} md={2}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <CardGiftcardIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ mt: 1 }}>
-                  Exclusive Deals
-                </Typography>
-                <Typography variant="body2">
-                  Unlock personalized discounts and offers.
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
+          ))}
+        </Grid>
       </Box>
     </Box>
   );

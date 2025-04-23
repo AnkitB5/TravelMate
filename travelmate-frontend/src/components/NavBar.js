@@ -1,5 +1,4 @@
-// src/components/Navbar.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -12,24 +11,64 @@ import {
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 
-const NavBar = ({ onSearch }) => {
+const NavBar = ({ onSearch, isAuthenticated, setIsAuthenticated }) => {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('access_token');
+  
+  // Use the prop if provided, otherwise check localStorage directly
+  const [authState, setAuthState] = useState(
+    isAuthenticated !== undefined 
+      ? isAuthenticated 
+      : !!localStorage.getItem('access_token')
+  );
+  
+  // Update local state when the prop changes
+  useEffect(() => {
+    if (isAuthenticated !== undefined) {
+      setAuthState(isAuthenticated);
+    }
+  }, [isAuthenticated]);
+  
+  const showSearchBar = ['/dashboard','/trips'].includes(location.pathname);
 
-  const handleSearchChange = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    if (onSearch) {
-      onSearch(query);
+  const handleSearchChange = (e) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+    if (typeof onSearch === 'function') {
+      onSearch(q);
     }
   };
 
-  const showSearchBar = location.pathname === '/dashboard' || location.pathname === '/trips';
+  const handleLogout = () => {
+    console.log('User initiated logout');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('isAuthenticated');
+    
+    // Update parent component's auth state if provided
+    if (typeof setIsAuthenticated === 'function') {
+      setIsAuthenticated(false);
+    }
+    
+    // Update local state
+    setAuthState(false);
+    
+    // Navigate to home page
+    navigate('/');
+    console.log('Logout complete, redirected to home page');
+  };
 
   return (
-    <AppBar position="static" color="primary" sx={{ mb: 4 }}>
+    <AppBar
+      position="sticky"
+      elevation={0}
+      sx={{
+        backgroundColor: 'transparent',
+        backdropFilter: 'blur(8px)',
+      }}
+    >
       <Toolbar>
         <Typography
           variant="h6"
@@ -38,40 +77,36 @@ const NavBar = ({ onSearch }) => {
           sx={{
             flexGrow: 1,
             textDecoration: 'none',
-            color: 'inherit',
-            fontWeight: 'bold'
+            color: '#FFF',
+            fontWeight: 'bold',
           }}
         >
           TravelMate
         </Typography>
 
-        {showSearchBar && (
-          <Box sx={{ mx: 2 }}>
+        {authState && showSearchBar && (
+          <Box sx={{ mr: 2, width: { xs: 120, sm: 200, md: 300 } }}>
             <TextField
               size="small"
-              placeholder="Search trips..."
+              placeholder="Search trips…"
               value={searchQuery}
               onChange={handleSearchChange}
+              fullWidth
               sx={{
-                width: 300,
-                '& .MuiInputBase-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  },
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  color: '#FFF',
+                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
+                  '&.Mui-focused fieldset': { borderColor: '#FFF' },
                 },
                 '& .MuiInputBase-input::placeholder': {
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  color: 'rgba(255,255,255,0.7)',
                 },
               }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                    <SearchIcon sx={{ color: 'rgba(255,255,255,0.7)' }} />
                   </InputAdornment>
                 ),
               }}
@@ -79,62 +114,28 @@ const NavBar = ({ onSearch }) => {
           </Box>
         )}
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {isLoggedIn ? (
-            <>
-              <Button
-                component={Link}
-                to="/dashboard"
-                sx={{ color: 'white' }}
-              >
-                Dashboard
-              </Button>
-              <Button
-                onClick={() => {
-                  localStorage.removeItem('access_token');
-                  localStorage.removeItem('refresh_token');
-                  localStorage.removeItem('username');
-                  localStorage.removeItem('isAuthenticated');
-                  navigate('/');
-                }}
-                sx={{ color: 'white' }}
-              >
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                component={Link}
-                to="/"
-                sx={{ color: 'white' }}
-              >
-                Home
-              </Button>
-              <Button
-                component={Link}
-                to="/about"
-                sx={{ color: 'white' }}
-              >
-                About Us
-              </Button>
-              <Button
-                component={Link}
-                to="/login"
-                sx={{ color: 'white' }}
-              >
-                Login
-              </Button>
-              <Button
-                component={Link}
-                to="/signup"
-                sx={{ color: 'white' }}
-              >
-                Sign Up
-              </Button>
-            </>
-          )}
-        </Box>
+        {authState ? (
+          <>
+            <Button component={Link} to="/dashboard" sx={{ color: '#FFF' }}>
+              Dashboard
+            </Button>
+            <Button
+              sx={{ color: '#FFF' }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button component={Link} to="/login" sx={{ color: '#FFF' }}>
+              Login
+            </Button>
+            <Button component={Link} to="/signup" sx={{ color: '#FFF' }}>
+              Sign Up
+            </Button>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

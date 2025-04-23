@@ -1,12 +1,13 @@
-// src/App.js
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import * as THREE from 'three';
+import NET from 'vanta/dist/vanta.net.min';
 
 import NavBar from './components/NavBar';
+import Footer from './components/footer';
 import HomePage from './components/HomePage';
 import TripDashboard from './components/TripDashboard';
 import Login from './components/Login';
@@ -17,153 +18,127 @@ import TripDetails from './components/TripDetails';
 import WeatherDetails from './components/WeatherDetails';
 import PackingList from './components/PackingList';
 import TravelTips from './components/TravelTips';
-import Footer from './components/footer';
 import PrivateRoute from './components/PrivateRoute';
-
-// Reset‐password screens
 import PasswordResetRequest from './components/PasswordResetRequest';
 import PasswordResetConfirm from './components/PasswordResetConfirm';
 
-import './App.css';
-
 const theme = createTheme({
   palette: {
-    mode: 'light',
-    primary: { main: '#2563eb', light: '#60a5fa', dark: '#1e40af' },
-    secondary: { main: '#7c3aed', light: '#a78bfa', dark: '#5b21b6' },
-    background: { default: '#f8fafc', paper: '#ffffff' },
-    text: { primary: '#1e293b', secondary: '#64748b' },
+    mode: 'dark',
+    background: {
+      default: 'transparent',
+      paper: 'rgba(0,0,0,0.6)',
+    },
+    text: {
+      primary: '#EEEEEE',
+      secondary: '#CCCCCC',
+    },
+    primary: { main: '#90caf9' },
+    secondary: { main: '#f48fb1' },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: { fontWeight: 700, fontSize: '2.5rem' },
-    h2: { fontWeight: 600, fontSize: '2rem' },
-    h3: { fontWeight: 600, fontSize: '1.75rem' },
-    h4: { fontWeight: 600, fontSize: '1.5rem' },
-    h5: { fontWeight: 500, fontSize: '1.25rem' },
-    h6: { fontWeight: 500, fontSize: '1.1rem' },
-    subtitle1: { fontSize: '1rem', fontWeight: 500 },
-    subtitle2: { fontSize: '0.875rem', fontWeight: 500 },
-    body1: { fontSize: '1rem', lineHeight: 1.6 },
-    body2: { fontSize: '0.875rem', lineHeight: 1.6 },
+    fontFamily: '"Inter","Helvetica Neue",sans-serif',
+    h1: { color: '#FFFFFF' },
+    h2: { color: '#FFFFFF' },
+    body1: { color: '#EEEEEE' },
+    body2: { color: '#CCCCCC' },
   },
-  shape: { borderRadius: 12 },
   components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-          padding: '8px 16px',
-          borderRadius: 8,
-          transition: 'all 0.2s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-1px)',
-            boxShadow:
-              '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-          },
-        },
-        contained: {
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow:
-              '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-          },
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow:
-            '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-          transition: 'all 0.2s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow:
-              '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
-          },
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow:
-            '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
-            '&:hover fieldset': { borderColor: '#2563eb' },
-            '&.Mui-focused fieldset': { borderColor: '#2563eb' },
-          },
-        },
-      },
-    },
+    MuiPaper: { styleOverrides: { root: { backgroundColor: 'rgba(0,0,0,0.6)' } } },
   },
 });
 
-// Debug environment variables
-const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-console.log('Current environment:', process.env.NODE_ENV);
-console.log('Google Client ID:', clientId ? 'Present' : 'Missing');
-
-if (!clientId) {
-  console.error('Google Client ID is missing. Please check your .env file in the travelmate-frontend directory.');
-}
-
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    !!localStorage.getItem('access_token')
-  );
+  const vantaRef = useRef(null);
+  const [vantaEffect, setVantaEffect] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
 
-  // Sync login/logout across tabs
+  // Check for authentication on component mount and add event listener for storage changes
   useEffect(() => {
-    const onStorage = (e) => {
-      if (e.key === 'access_token') {
-        setIsAuthenticated(!!e.newValue);
+    const checkAuth = () => {
+      const token = localStorage.getItem('access_token');
+      const authFlag = localStorage.getItem('isAuthenticated');
+      const isAuth = token && authFlag === 'true';
+      
+      console.log('App: Checking authentication state', { 
+        hasToken: !!token, 
+        authFlag, 
+        isAuth 
+      });
+      
+      setIsAuthenticated(isAuth);
+    };
+    
+    // Check immediately on mount
+    checkAuth();
+    
+    // Set up listener for storage events (for cross-tab login/logout)
+    const handleStorageChange = (e) => {
+      if (e.key === 'access_token' || e.key === 'isAuthenticated') {
+        console.log('Storage changed, updating auth state');
+        checkAuth();
       }
     };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
+  useEffect(() => {
+    if (!vantaEffect) {
+      setVantaEffect(
+        NET({
+          el: vantaRef.current,
+          THREE,
+          backgroundColor: 0x000000,
+          color: 0x444444,      // line color
+          maxDistance: 20,
+          spacing: 18,
+          showDots: false,
+        })
+      );
+    }
+    return () => {
+      if (vantaEffect) vantaEffect.destroy();
+    };
+  }, [vantaEffect]);
+
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+  console.log('Google Client ID:', clientId ? 'Available' : 'Missing');
+
   return (
-    <GoogleOAuthProvider clientId={clientId || ''}>
+    <GoogleOAuthProvider clientId={clientId}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        {/* full-screen Vanta canvas */}
+        <div
+          ref={vantaRef}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
+          }}
+        />
         <Router>
-          <NavBar onSearch={setSearchQuery} />
-
+          <NavBar onSearch={handleSearch} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
           <Routes>
-            {/* Public */}
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutUs />} />
-            <Route
-              path="/login"
-              element={<Login setIsAuthenticated={setIsAuthenticated} />}
-            />
-            <Route path="/signup" element={<Signup />} />
-
-            {/* Password reset */}
-            <Route
-              path="/password-reset"
-              element={<PasswordResetRequest />}
-            />
-            <Route
-              path="/password-reset-confirm/:uidb64/:token"
-              element={<PasswordResetConfirm />}
-            />
-
-            {/* Protected */}
+            <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/password-reset" element={<PasswordResetRequest />} />
+            <Route path="/password-reset-confirm/:uidb64/:token" element={<PasswordResetConfirm />} />
             <Route
               path="/dashboard"
               element={
@@ -221,7 +196,6 @@ function App() {
               }
             />
           </Routes>
-
           <Footer />
         </Router>
       </ThemeProvider>
