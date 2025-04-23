@@ -1,5 +1,10 @@
 // src/components/AboutUs.js
 import React from 'react';
+import ankit from '../assets/aboutPics/1731915681374.jpg';
+import parth from '../assets/aboutPics/parth.jpg';
+import bharat from '../assets/aboutPics/bharat.jpg';
+import akash from '../assets/aboutPics/akash.jpg';
+import krish from '../assets/aboutPics/IMG_2742.jpg';
 import {
   Box,
   Container,
@@ -90,7 +95,7 @@ const AboutUs = () => {
       <Container sx={{ py: 8 }}>
         <Grid container spacing={6} alignItems="center">
           <Grid item xs={12} md={6}>
-            <Typography variant="h3" sx={{ fontWeight: 700, mb: 3, color: '#1a237e' }}>
+            <Typography variant="h3" sx={{ fontWeight: 700, mb: 3, color: 'white' }}>
               Our Story
             </Typography>
             <Typography variant="body1" sx={{ mb: 2, fontSize: '1.1rem', lineHeight: 1.7 }}>
@@ -136,11 +141,10 @@ const AboutUs = () => {
           
           <Grid container spacing={4} justifyContent="center">
             {/* Team Member 1 */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2}>
               <Card 
                 sx={{ 
-                  height: '100%',
-                  borderRadius: 4,
+                  borderRadius: 3,
                   boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
@@ -149,7 +153,7 @@ const AboutUs = () => {
                   }
                 }}
               >
-                <Box sx={{ position: 'relative', pt: '100%' }}>
+                <Box sx={{ position: 'relative', pt: '80%' }}>
                   <CardMedia
                     component="img"
                     sx={{
@@ -160,19 +164,19 @@ const AboutUs = () => {
                       height: '100%',
                       objectFit: 'cover',
                     }}
-                    image="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80"
+                    image={akash}
                     alt="Akash Satya"
                   />
                 </Box>
-                <CardContent sx={{ textAlign: 'center', bgcolor: 'white' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                <CardContent sx={{ textAlign: 'center', bgcolor: 'white', p: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
                     Akash Satya
                   </Typography>
-                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500 }}>
+                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                     Scrum Master
                   </Typography>
-                  <Divider sx={{ my: 1.5 }} />
-                  <Typography variant="body2">
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
                     Coordinates our agile process and ensures smooth collaboration between teams.
                   </Typography>
                 </CardContent>
@@ -180,11 +184,10 @@ const AboutUs = () => {
             </Grid>
 
             {/* Team Member 2 */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2}>
               <Card 
                 sx={{ 
-                  height: '100%',
-                  borderRadius: 4,
+                  borderRadius: 3,
                   boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
@@ -193,7 +196,7 @@ const AboutUs = () => {
                   }
                 }}
               >
-                <Box sx={{ position: 'relative', pt: '100%' }}>
+                <Box sx={{ position: 'relative', pt: '80%' }}>
                   <CardMedia
                     component="img"
                     sx={{
@@ -204,19 +207,19 @@ const AboutUs = () => {
                       height: '100%',
                       objectFit: 'cover',
                     }}
-                    image="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80"
+                    image={ankit}
                     alt="Ankit Bhattarai"
                   />
                 </Box>
-                <CardContent sx={{ textAlign: 'center', bgcolor: 'white' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                <CardContent sx={{ textAlign: 'center', bgcolor: 'white', p: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
                     Ankit Bhattarai
                   </Typography>
-                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500 }}>
+                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                     Product Owner
                   </Typography>
-                  <Divider sx={{ my: 1.5 }} />
-                  <Typography variant="body2">
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
                     Shapes our vision and ensures we deliver features that truly enhance your travel experience.
                   </Typography>
                 </CardContent>
@@ -224,11 +227,10 @@ const AboutUs = () => {
             </Grid>
 
             {/* Team Member 3 */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2}>
               <Card 
                 sx={{ 
-                  height: '100%',
-                  borderRadius: 4,
+                  borderRadius: 3,
                   boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
@@ -237,7 +239,7 @@ const AboutUs = () => {
                   }
                 }}
               >
-                <Box sx={{ position: 'relative', pt: '100%' }}>
+                <Box sx={{ position: 'relative', pt: '80%' }}>
                   <CardMedia
                     component="img"
                     sx={{
@@ -248,19 +250,19 @@ const AboutUs = () => {
                       height: '100%',
                       objectFit: 'cover',
                     }}
-                    image="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80"
+                    image={krish}
                     alt="Krish Bhalodiya"
                   />
                 </Box>
-                <CardContent sx={{ textAlign: 'center', bgcolor: 'white' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                <CardContent sx={{ textAlign: 'center', bgcolor: 'white', p: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
                     Krish Bhalodiya
                   </Typography>
-                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500 }}>
+                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
                     Front-End Developer
                   </Typography>
-                  <Divider sx={{ my: 1.5 }} />
-                  <Typography variant="body2">
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
                     Crafts beautiful interfaces that make planning your trips a delightful experience.
                   </Typography>
                 </CardContent>
@@ -268,11 +270,10 @@ const AboutUs = () => {
             </Grid>
 
             {/* Team Member 4 */}
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={6} md={2}>
               <Card 
                 sx={{ 
-                  height: '100%',
-                  borderRadius: 4,
+                  borderRadius: 3,
                   boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
@@ -281,7 +282,7 @@ const AboutUs = () => {
                   }
                 }}
               >
-                <Box sx={{ position: 'relative', pt: '100%' }}>
+                <Box sx={{ position: 'relative', pt: '80%' }}>
                   <CardMedia
                     component="img"
                     sx={{
@@ -292,19 +293,63 @@ const AboutUs = () => {
                       height: '100%',
                       objectFit: 'cover',
                     }}
-                    image="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=634&q=80"
+                    image={parth}
                     alt="Parth Dangi"
                   />
                 </Box>
-                <CardContent sx={{ textAlign: 'center', bgcolor: 'white' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                <CardContent sx={{ textAlign: 'center', bgcolor: 'white', p: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
                     Parth Dangi
                   </Typography>
-                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500 }}>
-                    Front-End Developer
+                  <Typography variant="subtitle1" color="primary" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                    Back-End Developer
                   </Typography>
-                  <Divider sx={{ my: 1.5 }} />
-                  <Typography variant="body2">
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                    Specializes in creating responsive designs that work seamlessly across all devices.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Team Member 5 */}
+            <Grid item xs={12} sm={6} md={2}>
+              <Card 
+                sx={{ 
+                  borderRadius: 3,
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 12px 25px rgba(0,0,0,0.2)',
+                  },
+                  p: 1
+                }}
+              >
+                <Box sx={{ position: 'relative', pt: '75%' }}>
+                  <CardMedia
+                    component="img"
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    image={bharat}
+                    alt="Bharat Khadka"
+                  />
+                </Box>
+                <CardContent sx={{ textAlign: 'center', bgcolor: 'white', p: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>
+                    Bharat Khadka
+                  </Typography>
+                  <Typography variant="subtitle2" color="primary" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                    Back-End Developer
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
                     Specializes in creating responsive designs that work seamlessly across all devices.
                   </Typography>
                 </CardContent>

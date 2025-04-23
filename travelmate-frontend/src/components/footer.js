@@ -20,7 +20,7 @@ const Footer = () => {
   }
 
   return (
-    <Box sx={{ backgroundColor: '#f5f5f5', py: 4, mt: 4 }}>
+    <Box sx={{ backgroundColor: 'black', py: 4, mt: 4 }}>
       <Container
         sx={{
           display: 'flex',
@@ -42,14 +42,14 @@ const Footer = () => {
               sx={{ height: '150%' }}
             />
           </Box>
-          <Typography variant="body2" color="text.secondary" maxWidth={300}>
+          <Typography variant="body2" sx={{ color: 'white' }} maxWidth={300}>
             Your trusted companion for unforgettable travel experiences. Plan, explore, and discover the world with Travel Mate.
           </Typography>
         </Box>
 
         {/* Quick Links */}
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
             Quick Links
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -67,7 +67,7 @@ const Footer = () => {
                   e.preventDefault();
                   navigate(path);
                 }}
-                color="text.primary"
+                sx={{ color: 'white' }}
               >
                 {label}
               </Link>
@@ -77,20 +77,20 @@ const Footer = () => {
 
         {/* Social Media */}
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
             Connect With Us
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <IconButton aria-label="Facebook">
+            <IconButton aria-label="Facebook" sx={{ color: 'white' }}>
               <FacebookIcon />
             </IconButton>
-            <IconButton aria-label="Twitter">
+            <IconButton aria-label="Twitter" sx={{ color: 'white' }}>
               <TwitterIcon />
             </IconButton>
-            <IconButton aria-label="Instagram">
+            <IconButton aria-label="Instagram" sx={{ color: 'white' }}>
               <InstagramIcon />
             </IconButton>
-            <IconButton aria-label="YouTube">
+            <IconButton aria-label="YouTube" sx={{ color: 'white' }}>
               <YouTubeIcon />
             </IconButton>
           </Box>
