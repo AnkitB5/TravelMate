@@ -1,40 +1,42 @@
-// src/components/GoogleAuthButton.js
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { Button, Box } from '@mui/material';
+import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 
 const GoogleAuthButton = ({ setIsAuthenticated }) => {
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+  if (!clientId) {
+    console.error('Google Client ID is missing. Please check your .env file.');
+    return null;
+  }
+
   return (
-    <Box width="100%" display="flex" justifyContent="center">
-      <GoogleLogin
-        onSuccess={async cred => {
+    <GoogleLogin
+      onSuccess={async (credentialResponse) => {
+        try {
           const res = await fetch('http://localhost:8000/api/auth/google/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ access_token: cred.credential }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ access_token: credentialResponse.credential }),
           });
           const data = await res.json();
           if (data.key) {
             localStorage.setItem('access_token', data.key);
             localStorage.setItem('isAuthenticated', 'true');
-            setIsAuthenticated?.(true);
-            window.location.replace('/dashboard');
+            if (setIsAuthenticated) setIsAuthenticated(true);
           }
-        }}
-        onError={() => console.error('Google login failed')}
-        render={({ onClick }) => (
-          <Button
-            variant="outlined"
-            startIcon={<GoogleIcon />}
-            onClick={onClick}
-            sx={{ width: '100%', maxWidth: 400, py: 1.5 }}
-          >
-            Sign in with Google
-          </Button>
-        )}
-      />
-    </Box>
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }}
+      onError={() => {
+        console.error('Login Failed');
+      }}
+      useOneTap
+    />
   );
 };
 
