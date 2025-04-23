@@ -12,7 +12,7 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
-    callback_url  = os.getenv("GOOGLE_CALLBACK_URL")
+    callback_url = "http://localhost:3000"
     client_class = OAuth2Client
 
 urlpatterns = [
