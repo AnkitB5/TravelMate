@@ -137,7 +137,7 @@ const PackingList = () => {
   return (
     <Container>
       <Box mt={4} mb={2} display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4">
+        <Typography variant="h4" color='rgba(144,202,249,255)'>
           Packing List for {trip?.destination || 'Your Trip'}
         </Typography>
         <Button startIcon={<ArrowBackIcon />} onClick={()=>navigate(-1)}>
@@ -147,17 +147,30 @@ const PackingList = () => {
 
       {/* NEW: Dress Code Recommendations */}
       <Box mb={4}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom style={{ color: 'white' }}>
           Cultural Dress Code Recommendations
         </Typography>
         {loadingCodes
-          ? <CircularProgress size={24}/>
+          ? <CircularProgress size={24} />
           : dressCodes.length === 0
-            ? <Typography color="textSecondary">No dress‑code info available.</Typography>
+            ? <Typography color="textSecondary" style={{ color: 'white' }}>No dress‑code info available.</Typography>
             : dressCodes.map(code => (
-                <Box key={code.id} mb={2} p={2} bgcolor="#f5f5f5" borderRadius={2}>
-                  <Typography variant="subtitle1" fontWeight="bold">{code.title}</Typography>
-                  <Typography variant="body2">{code.description}</Typography>
+                <Box
+                  key={code.id}
+                  mb={2}
+                  p={2}
+                  style={{
+                    backgroundColor: 'black',
+                    borderRadius: '8px',
+                    border: '1px solid white'
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight="bold" style={{ color: 'white' }}>
+                    {code.title}
+                  </Typography>
+                  <Typography variant="body2" style={{ color: 'white' }}>
+                    {code.description}
+                  </Typography>
                 </Box>
               ))
         }
