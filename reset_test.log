@@ -1,0 +1,596 @@
+INFO 2025-04-25 21:39:01,586 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+Performing system checks...
+
+April 25, 2025 - 21:39:01
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+Content-Type: multipart/alternative;
+ boundary="===============8001090863631947842=="
+MIME-Version: 1.0
+Subject: Your TravelMate Password Reset
+From: noreply@travelmate.com
+To: user2023@example.com
+Date: Fri, 25 Apr 2025 21:39:05 -0000
+Message-ID: <174561714597.7024.6069264921044826234@mac.lan>
+
+--===============8001090863631947842==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+Hello user2023,
+
+You requested a password reset. Click the link below to reset your password:
+
+http://localhost:8002/api/trips/password-reset-confirm/Ng/cou455-3fa5fdd4cb60aa3f2357bfca531cff99/
+
+If you didn't request this, you can safely ignore this email.
+--===============8001090863631947842==
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
+<!-- templates/password_reset_email.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Password Reset for TravelMate</title>
+</head>
+<body style="font-family: sans-serif; line-height: 1.5;">
+  <h2>Hello user2023,</h2>
+  <p>You (or someone who knows your email) requested a password reset for TravelMate.</p>
+  <p>
+    Just click the link below to choose a new password:<br>
+    <a href="http://localhost:8002/api/trips/password-reset-confirm/Ng/cou455-3fa5fdd4cb60aa3f2357bfca531cff99/" style="color: #2563eb;">Reset your password</a>
+  </p>
+  <p>If you didn’t request this, you can safely ignore this email—nothing will change.</p>
+  <hr>
+  <p style="font-size: 0.9em; color: #666;">
+    TravelMate Team<br>
+    <a href="https://yourdomain.com" style="color: #999;">https://yourdomain.com</a>
+  </p>
+</body>
+</html>
+
+--===============8001090863631947842==--
+
+-------------------------------------------------------------------------------
+INFO 2025-04-25 21:39:05,994 basehttp "POST /password-reset/ HTTP/1.1" 200 83
+INFO 2025-04-25 21:41:30,091 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Password reset email sent to user2023@example.com
+INFO 2025-04-25 21:41:30,658 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:41:44,297 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:41:30
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:41:44,694 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:41:51,399 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:41:44
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:41:51,805 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:41:58,308 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:41:51
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:41:58,717 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:42:06,142 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:41:58
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:42:06,570 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:42:07,824 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:42:06
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:42:08,213 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:44:09,450 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/urls.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:42:08
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:44:10,002 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:44:31,089 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:44:10
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:44:31,528 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:44:34,861 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:44:31
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:44:35,263 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:52:08,443 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:44:35
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:52:09,100 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:52:25,048 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/settings.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:52:09
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:52:25,589 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:53:10,478 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:52:25
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:53:11,605 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:53:36,853 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:53:11
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:53:37,437 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:56:51,710 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/travelmate/urls.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:53:37
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:56:52,412 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:57:10,246 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:56:52
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:57:11,135 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:57:15,543 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:57:11
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:57:15,971 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:57:31,902 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:57:16
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:57:32,503 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 21:57:33,870 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:57:32
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 21:57:34,285 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 22:07:01,631 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 21:57:34
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 22:07:02,236 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 22:07:04,611 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 22:07:02
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 22:07:05,188 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 23:02:28,122 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 22:07:05
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 23:02:28,817 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).
+INFO 2025-04-25 23:02:30,025 autoreload /Users/parthdangi/Documents/GitHub/TravelMate/trips/views.py changed, reloading.
+Performing system checks...
+
+April 25, 2025 - 23:02:28
+Django version 5.2, using settings 'travelmate.settings'
+Starting development server at http://127.0.0.1:8002/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+INFO 2025-04-25 23:02:30,314 autoreload Watching for file changes with StatReloader
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:228: UserWarning: app_settings.USERNAME_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['username']['required']
+  required=allauth_account_settings.USERNAME_REQUIRED,
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:230: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+/Users/parthdangi/.pyenv/versions/3.12.2/lib/python3.12/site-packages/dj_rest_auth/registration/serializers.py:288: UserWarning: app_settings.EMAIL_REQUIRED is deprecated, use: app_settings.SIGNUP_FIELDS['email']['required']
+  email = serializers.EmailField(required=allauth_account_settings.EMAIL_REQUIRED)
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
+System check identified 2 issues (0 silenced).

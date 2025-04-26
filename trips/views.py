@@ -144,8 +144,16 @@ def signup(request):
             email=email
         )
         
-        # Create a corresponding Profile for the new user
-        Profile.objects.create(user=user, traveler_type=traveler_type)
+        # Check if a profile was already created by the signal handler
+        try:
+            profile = Profile.objects.get(user=user)
+            # Update the traveler_type if needed
+            if profile.traveler_type != traveler_type:
+                profile.traveler_type = traveler_type
+                profile.save()
+        except Profile.DoesNotExist:
+            # Create a profile if it doesn't exist
+            Profile.objects.create(user=user, traveler_type=traveler_type)
 
         return JsonResponse({'message': 'User created successfully.'}, status=201)
     else:
@@ -385,132 +393,156 @@ def search_cities(request):
 
 @csrf_exempt
 def password_reset_request(request):
-    if request.method == 'GET':
-        # render the HTML form
-        return render(request, 'password_reset.html')
-
-    if request.method == 'POST':
-        # JSON body?
-        if request.content_type.startswith('application/json'):
-            try:
-                data = json.loads(request.body)
-                email = data.get('email')
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-        else:
-            # form submit
-            email = request.POST.get('email')
-
-        if not email:
-            error = 'Email is required.'
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'error': error}, status=400)
-            return render(request, 'password_reset.html', {'error': error})
-
-        try:
+    if request.method == "POST":
+        data = json.loads(request.body)
+        email = data.get("email", "")
+        
+        if User.objects.filter(email=email).exists():
             user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            # always succeed to avoid leaking
-            if request.content_type.startswith('application/json'):
-                return JsonResponse({'message': 'If an account exists with this email, you will receive instructions.'})
-            return render(request, 'password_reset.html', {
-                'message': 'If an account exists with this email, you will receive instructions.'
-            })
-
-        # generate token + uid
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        reset_url = request.build_absolute_uri(
-            reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
-        )
-
-        # render and send via Mailgun (or console)
-        subject = 'Your TravelMate Password Reset'
-        html_message = render_to_string('password_reset_email.html', {
-            'user': user,
-            'reset_url': reset_url,
-        })
-
-        try:
-            MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
-            MAILGUN_DOMAIN  = os.getenv('MAILGUN_DOMAIN')
-            response = requests.post(
-                f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/messages",
-                auth=("api", MAILGUN_API_KEY),
-                data={
-                    "from":    f"TravelMate <postmaster@{MAILGUN_DOMAIN}>",
-                    "to":      [email],
-                    "subject": subject,
-                    "html":    html_message,
-                }
+            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            
+            # Build the reset URL with the correct frontend URL and port
+            frontend_url = settings.FRONTEND_URL or "http://localhost:3000"
+            
+            # Ensure uidb64 is properly encoded and not empty
+            if not uidb64:
+                print(f"ERROR: uidb64 is empty for user {user.username} (ID: {user.pk})")
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Log the raw values for debugging
+            print(f"User ID: {user.pk}")
+            print(f"Encoded UID: {uidb64}")
+            print(f"Token: {token}")
+            
+            # Create the reset link with explicit URL components
+            reset_link = f"{frontend_url}/password-reset-confirm/{uidb64}/{token}/"
+            
+            print(f"Generated reset link: {reset_link}")
+            print(f"For user: {user.username} (ID: {user.pk})")
+            
+            # Email subject and body
+            subject = "Password Reset Request"
+            
+            # Render the email template with context
+            email_template_name = "password_reset_email.html"
+            email_context = {
+                "reset_link": reset_link,
+                "user": user,
+            }
+            email_body = render_to_string(email_template_name, email_context)
+            
+            # Send the email
+            email_message = EmailMessage(
+                subject,
+                email_body,
+                settings.DEFAULT_FROM_EMAIL,
+                [email]
             )
-        except Exception:
-            traceback.print_exc()
-            # swallow
-
-        if request.content_type.startswith('application/json'):
-            return JsonResponse({'message': 'If an account exists with this email, you will receive instructions.'})
-        return render(request, 'password_reset.html', {
-            'message': 'If an account exists with this email, you will receive instructions.'
-        })
+            email_message.content_subtype = "html"
+            
+            try:
+                email_message.send(fail_silently=False)
+                
+                # Check if we're using console backend for development
+                if "console" in settings.EMAIL_BACKEND or settings.DEBUG:
+                    print("\n--- PASSWORD RESET EMAIL CONTENT ---")
+                    print(f"To: {email}")
+                    print(f"Subject: {subject}")
+                    print("Body:")
+                    print(email_body)
+                    print("--- END OF EMAIL CONTENT ---\n")
+                    
+                    return JsonResponse({
+                        "message": "Password reset email has been sent. Since you're in development mode, you can use the link below to reset your password.",
+                        "development_note": "The application is in development mode using console email backend. No actual email was sent to the user. The email content has been printed to the console.",
+                        "reset_link": reset_link
+                    })
+                
+                return JsonResponse({"message": "Password reset email has been sent. Please check your inbox."})
+            except Exception as e:
+                print(f"Email sending error: {str(e)}")
+                return JsonResponse({"error": "There was an error sending the email. Please try again later."}, status=500)
+        
+        # Always return a success message even if the email doesn't exist for security reasons
+        # But we could add a development flag to be more helpful during development
+        if settings.DEBUG:
+            return JsonResponse({
+                "message": "If the email exists, a password reset link has been sent.", 
+                "development_note": f"Email {email} not found in the database."
+            }, status=200)
+        
+        return JsonResponse({"message": "If the email exists, a password reset link has been sent."}, status=200)
+    
+    # If GET request, just return a message to use POST
+    return JsonResponse({"message": "Please send a POST request with the email address."}, status=400)
 
 @csrf_exempt
-def password_reset_confirm(request, uidb64, token):
+def password_reset_confirm(request, uid, token, validate_only=False):
     # Decode the UID
     try:
-        uid  = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except Exception:
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=user_id)
+    except Exception as e:
+        print(f"Error decoding UID: {str(e)}")
         user = None
 
+    # Check if this is just a token validation request
+    if validate_only:
+        if user is not None and default_token_generator.check_token(user, token):
+            return JsonResponse({'valid': True})
+        return JsonResponse({'valid': False}, status=400)
+
     if request.method == 'GET':
-        # render form
+        # For compatibility with browser views
         return render(request, 'password_reset_confirm.html', {
-            'uidb64': uidb64,
+            'uidb64': uid,
             'token': token,
             'error': None,
         })
 
     if request.method == 'POST':
         # get new password
-        if request.content_type.startswith('application/json'):
+        if request.content_type and request.content_type.startswith('application/json'):
             try:
                 data = json.loads(request.body)
             except json.JSONDecodeError:
                 return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-            new_password = data.get('password')
-            confirm      = None
+            new_password1 = data.get('new_password1')
+            new_password2 = data.get('new_password2')
         else:
-            new_password = request.POST.get('password')
-            confirm      = request.POST.get('confirm_password')
+            new_password1 = request.POST.get('new_password1')
+            new_password2 = request.POST.get('new_password2')
 
-        if not new_password:
+        if not new_password1:
             msg = 'Password is required.'
-            if request.content_type.startswith('application/json'):
+            if request.content_type and request.content_type.startswith('application/json'):
                 return JsonResponse({'error': msg}, status=400)
             return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
+                'uidb64': uid, 'token': token, 'error': msg
             })
 
-        if confirm is not None and new_password != confirm:
+        if new_password1 != new_password2:
             msg = 'Passwords do not match.'
+            if request.content_type and request.content_type.startswith('application/json'):
+                return JsonResponse({'error': msg}, status=400)
             return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
+                'uidb64': uid, 'token': token, 'error': msg
             })
 
         if user is None or not default_token_generator.check_token(user, token):
             msg = 'Invalid or expired link.'
-            if request.content_type.startswith('application/json'):
+            if request.content_type and request.content_type.startswith('application/json'):
                 return JsonResponse({'error': msg}, status=400)
             return render(request, 'password_reset_confirm.html', {
-                'uidb64': uidb64, 'token': token, 'error': msg
+                'uidb64': uid, 'token': token, 'error': msg
             })
 
         # all good—actually set the password
-        user.set_password(new_password)
+        user.set_password(new_password1)
         user.save()
 
-        if request.content_type.startswith('application/json'):
+        if request.content_type and request.content_type.startswith('application/json'):
             return JsonResponse({'message': 'Password has been reset successfully.'})
         # redirect to login or show a success page
         return redirect('login')  # or wherever your login URL is

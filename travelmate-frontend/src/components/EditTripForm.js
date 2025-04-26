@@ -107,6 +107,16 @@ const EditTripForm = ({ open, onClose, trip, onSave }) => {
       return;
     }
 
+    // Prevent start date being after end date
+    if (
+      formData.travel_start &&
+      formData.travel_end &&
+      new Date(formData.travel_start) > new Date(formData.travel_end)
+    ) {
+      setError('Start date cannot be after end date');
+      return;
+    }
+
     try {
       setLoading(true);
       

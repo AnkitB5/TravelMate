@@ -139,7 +139,7 @@ function App() {
             <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
             <Route path="/password-reset" element={<PasswordResetRequest />} />
-            <Route path="/password-reset-confirm/:uidb64/:token" element={<PasswordResetConfirm />} />
+            <Route path="/password-reset-confirm/:uid/:token" element={<PasswordResetConfirm />} />
             <Route
               path="/dashboard"
               element={

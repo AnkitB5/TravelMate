@@ -54,7 +54,7 @@ const TripCard = ({ trip, onTripUpdated, onDelete }) => {
       }
     }
   }, [trip, traveler_type]);
-
+  
   useEffect(() => {
     if (!imageUrl && destination) {
       (async () => {
@@ -72,11 +72,11 @@ const TripCard = ({ trip, onTripUpdated, onDelete }) => {
       })();
     }
   }, [destination, imageUrl]);
-
+  
   const displayImage = imageUrl || dynamicImage ||
     'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&q=80';
   const desc = description || 'Explore this destination and discover its unique attractions.';
-
+  
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
   const openMenu = e => setAnchorEl(e.currentTarget);

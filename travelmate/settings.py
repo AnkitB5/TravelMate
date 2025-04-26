@@ -12,7 +12,7 @@ else:
 
 # ─── Security ────────────────────────────────────────────────────────────────
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-fallback-only-for-dev")
-DEBUG      = False
+DEBUG = os.getenv("DEBUG", "True") == "True"  # Set debug to True for now to see detailed errors
 ALLOWED_HOSTS = ['http://18.118.238.99/',    "18.118.238.99", "localhost", "127.0.0.1"]  # Development hosts
 
 # ─── Installed Apps ──────────────────────────────────────────────────────────
@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 
     # Third-party
     "rest_framework",
@@ -97,6 +98,10 @@ USE_I18N      = True
 USE_L10N      = True
 USE_TZ        = True
 STATIC_URL    = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Directory where collected static files will be stored
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # Look for static files in a 'static' directory
+]
 
 # ─── CORS / CSRF ─────────────────────────────────────────────────────────────
 CORS_ALLOW_ALL_ORIGINS    = False
@@ -114,11 +119,23 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
 }
+
+# dj-rest-auth settings
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh-token',
+    'JWT_AUTH_SECURE': False,  # Set to True in production with HTTPS
+    'SESSION_LOGIN': False,
+}
+
+REST_USE_JWT = True
 
 # ─── django-allauth ──────────────────────────────────────────────────────────
 AUTHENTICATION_BACKENDS = [
@@ -126,28 +143,96 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-EMAIL_BACKEND    = os.getenv("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST       = os.getenv("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT       = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_USE_TLS    = True
-EMAIL_HOST_USER  = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
+# Email Configuration
+if os.environ.get('EMAIL_HOST_USER') and os.environ.get('EMAIL_HOST_PASSWORD'):
+    # Production email settings using SMTP (Gmail example)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+else:
+    # Development email settings (prints to console)
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'noreply@travelmate.com'
+    print("WARNING: Using console email backend. Emails will be printed to console instead of being sent.")
+    print("To send real emails, add these lines to your .env file:")
+    print("EMAIL_HOST_USER=your-gmail@gmail.com")
+    print("EMAIL_HOST_PASSWORD=your-app-password")
+    print("(You need to generate an App Password in your Google Account)")
+    print("See instructions at: https://support.google.com/accounts/answer/185833")
 
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"   
-ACCOUNT_EMAIL_REQUIRED     = True          
+# Frontend URL for password reset links
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+
+ACCOUNT_EMAIL_VERIFICATION = "optional"   
+ACCOUNT_EMAIL_REQUIRED = True          
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True        
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3 
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"    
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
+
+# Social account settings
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_STORE_TOKENS = True
+SOCIALACCOUNT_ADAPTER = "travelmate.adapter.CustomSocialAccountAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APP": {
-            "client_id":     os.getenv("GOOGLE_CLIENT_ID"),
-            "secret":        os.getenv("GOOGLE_CLIENT_SECRET"),
-            "key":           ""
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "key": ""
         },
-        "SCOPE":       ["profile", "email"],
-        "AUTH_PARAMS": {"access_type": "offline"},
+        "SCOPE": [
+            "profile",
+            "email",
+            "openid",
+        ],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "VERIFIED_EMAIL": True,
     }
+}
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'allauth': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'dj_rest_auth': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'travelmate': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }

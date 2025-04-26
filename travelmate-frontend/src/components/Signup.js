@@ -16,12 +16,13 @@ import {
   Divider,
   CircularProgress
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import GoogleAuthButton from './GoogleAuthButton';
 
 const Signup = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -33,6 +34,55 @@ const Signup = ({ setIsAuthenticated }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [googleData, setGoogleData] = useState(null);
+
+  // Pre-fill with Google data if available from location state
+  useEffect(() => {
+    if (location.state?.googleSignupData) {
+      const { email, firstName, lastName } = location.state.googleSignupData;
+      setGoogleData(location.state.googleSignupData);
+      
+      // Generate a username suggestion from email
+      const usernameFromEmail = email.split('@')[0];
+      
+      setFormData(prev => ({
+        ...prev,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        username: usernameFromEmail
+      }));
+      
+      console.log('Pre-filled signup form with Google data');
+    }
+  }, [location.state]);
+  
+  // Listen for Google signup data event (when already on signup page)
+  useEffect(() => {
+    const handleGoogleData = (event) => {
+      const { email, firstName, lastName } = event.detail;
+      setGoogleData(event.detail);
+      
+      // Generate a username suggestion from email
+      const usernameFromEmail = email.split('@')[0];
+      
+      setFormData(prev => ({
+        ...prev,
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        username: usernameFromEmail
+      }));
+      
+      console.log('Pre-filled signup form with Google data from event');
+    };
+    
+    window.addEventListener('googleSignupData', handleGoogleData);
+    
+    return () => {
+      window.removeEventListener('googleSignupData', handleGoogleData);
+    };
+  }, []);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -161,6 +211,12 @@ const Signup = ({ setIsAuthenticated }) => {
           </Typography>
         </Divider>
         
+        {googleData && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            We've pre-filled some information from your Google account. Please complete the form to finish signup.
+          </Alert>
+        )}
+        
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
         
@@ -199,7 +255,8 @@ const Signup = ({ setIsAuthenticated }) => {
             value={formData.email}
             onChange={handleChange}
             required
-            disabled={isLoading}
+            disabled={isLoading || (googleData?.email && true)}
+            helperText={googleData?.email ? "Email from Google account (cannot be changed)" : ""}
           />
           <TextField
             label="Username"

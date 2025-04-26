@@ -93,7 +93,7 @@ const NavBar = ({ onSearch, isAuthenticated, setIsAuthenticated }) => {
               value={searchQuery}
               onChange={handleSearchChange}
               fullWidth
-              sx={{
+            sx={{
                 '& .MuiOutlinedInput-root': {
                   backgroundColor: 'rgba(255,255,255,0.1)',
                   color: '#FFF',
@@ -110,33 +110,33 @@ const NavBar = ({ onSearch, isAuthenticated, setIsAuthenticated }) => {
                     <SearchIcon sx={{ color: 'rgba(255,255,255,0.7)' }} />
                   </InputAdornment>
                 ),
-              }}
-            />
-          </Box>
+            }}
+          />
+        </Box>
         )}
 
         {authState ? (
-          <>
+            <>
             <Button component={Link} to="/dashboard" sx={{ color: '#FFF' }}>
-              Dashboard
-            </Button>
-            <Button
+                Dashboard
+              </Button>
+              <Button
               sx={{ color: '#FFF' }}
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
-          </>
-        ) : (
-          <>
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
             <Button component={Link} to="/login" sx={{ color: '#FFF' }}>
-              Login
-            </Button>
+                Login
+              </Button>
             <Button component={Link} to="/signup" sx={{ color: '#FFF' }}>
-              Sign Up
-            </Button>
-          </>
-        )}
+                Sign Up
+              </Button>
+            </>
+          )}
       </Toolbar>
     </AppBar>
   );

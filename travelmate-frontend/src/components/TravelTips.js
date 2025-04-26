@@ -8,7 +8,9 @@ import {
   ListItemText,
   CircularProgress,
   Alert,
-  Button
+  Button,
+  Box,
+  Paper
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import api from '../services/api';
@@ -21,37 +23,61 @@ const TravelTips = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log(`Fetching travel tips for trip ID: ${tripId}`);
     api.get(`/api/trips/${tripId}/travel-tips/`)
-      .then(res => setTips(res.data))
-      .catch(() => setError('Failed to load travel tips.'))
+      .then(res => {
+        console.log('Travel tips API response:', res.data);
+        setTips(res.data);
+      })
+      .catch(err => {
+        console.error('Error fetching travel tips:', err);
+        setError(`Failed to load travel tips: ${err.message}`);
+      })
       .finally(() => setLoading(false));
   }, [tripId]);
 
-  if (loading) return <Container><CircularProgress /></Container>;
-  if (error)   return <Container><Alert severity="error">{error}</Alert></Container>;
+  if (loading) return (
+    <Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress />
+      </Box>
+    </Container>
+  );
 
   return (
     <Container sx={{ mt:4 }}>
       <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)}>
         Back
       </Button>
-      <Typography variant="h4" gutterBottom>
-        Travel Tips
+      <Typography variant="h4" gutterBottom color="primary">
+        Travel Tips for Trip #{tripId}
       </Typography>
 
+      {error && <Alert severity="error" sx={{mb:3}}>{error}</Alert>}
+
       {tips.length === 0 ? (
-        <Typography>No travel tips available for this trip.</Typography>
+        <Alert severity="info" sx={{mb:2}}>No travel tips available for this trip.</Alert>
       ) : (
+        <Paper elevation={3} sx={{ bgcolor: 'rgba(0,0,0,0.7)' }}>
         <List>
           {tips.map((tip, idx) => (
             <ListItem key={tip.id || idx} divider>
               <ListItemText
-                primary={tip.title || tip.category}
-                secondary={tip.description}
+                  primary={
+                    <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                      {tip.title || tip.category || 'Untitled Tip'}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" color="textSecondary">
+                      {tip.description || 'No description available'}
+                    </Typography>
+                  }
               />
             </ListItem>
           ))}
         </List>
+        </Paper>
       )}
     </Container>
   );

@@ -279,7 +279,13 @@ export default function TripDashboard({ searchQuery: propSearchQuery }) {
     setError('');
 
     if (!selectedCity) return setError('Please select a destination.');
-    if (!formData.travel_start || !formData.travel_end) return setError('Both start and end dates are required.');
+    if (!formData.travel_start || !formData.travel_end)
+      return setError('Both start and end dates are required.');
+
+    // Prevent start date being after end date
+    if (new Date(formData.travel_start) > new Date(formData.travel_end)) {
+      return setError('Start date cannot be after end date.');
+    }
 
     // prevent duplicates on create
     if (!selectedTrip) {
