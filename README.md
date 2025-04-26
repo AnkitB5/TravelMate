@@ -54,13 +54,12 @@ The project is divided into two main parts:
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
-cd TravelMate-1
+git clone <github repo link>
 ```
 
 ### Step 2: Set Up the Django Backend
 
-1. **Create and activate a virtual environment:**
+1. **(OPTIONAL) Create and activate a virtual environment:**
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
@@ -73,6 +72,7 @@ pip install -r requirements.txt
 
 3. **Apply database migrations:**
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -166,3 +166,70 @@ For trips longer than 16 days, the application extends the forecast using:
 - Both servers (Django and React) need to be running simultaneously
 - The backend runs on port 8000 and the frontend on port 3000
 - Make sure to use the city search feature to ensure accurate weather data
+
+### Environment Variables
+
+Create a `.env` file in the project root with the following variables:
+
+```bash
+# Django settings
+DEBUG=True
+SECRET_KEY=your-secret-key
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database settings (if using PostgreSQL)
+DB_NAME=travelmate
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=localhost
+DB_PORT=5432
+
+# API Keys (if using additional services)
+OPENWEATHER_API_KEY=your-api-key  # Optional: for additional weather data
+```
+
+### Troubleshooting
+
+Common issues and solutions:
+
+1. **Database Migration Errors**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate --run-syncdb
+   ```
+
+2. **Node.js Dependencies Issues**
+   ```bash
+   cd travelmate-frontend
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+3. **CORS Issues**
+   - Ensure both servers are running
+   - Check that the frontend is making requests to the correct backend URL
+   - Verify CORS settings in Django settings.py
+
+4. **Weather API Issues**
+   - Verify your internet connection
+   - Check if the Open-Meteo API is accessible
+   - Ensure the city coordinates are valid
+
+## Contributing
+
+We welcome contributions to TravelMate! Here's how you can help:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/improvement`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add new feature'`)
+5. Push to the branch (`git push origin feature/improvement`)
+6. Create a Pull Request
+
+### Development Guidelines
+
+- Follow PEP 8 style guide for Python code
+- Use ESLint and Prettier for JavaScript/React code
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
